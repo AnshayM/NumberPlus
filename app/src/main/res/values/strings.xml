@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">数+</string>
+    <string name="title_home">首页</string>
+    <string name="title_dashboard">消息</string>
+    <string name="title_notifications">联系人</string>
+    <string name="title_settings">设置</string>
+</resources>
