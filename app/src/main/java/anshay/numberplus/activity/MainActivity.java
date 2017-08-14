@@ -15,23 +15,33 @@ import anshay.numberplus.R;
 
 public class MainActivity extends AppCompatActivity {
 
-    private TextView mTextMessage;
     private FragmentHome f1;
     private FragmentMsg f2;
     private FragmentConnect f3;
     private FragmentSetting f4;
-    private FragmentManager fragmentManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mTextMessage = (TextView) findViewById(R.id.message);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
+        setDefaultFragment();
     }
 
+    //设置第一次加载时候的默认页为FragmentHome
+    private void setDefaultFragment() {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        if(f1==null){
+            f1 = new FragmentHome();
+            transaction.add(R.id.content,f1);
+        }else{
+            transaction.show(f1);
+        }
+        transaction.commit();//提交，页面进行变化
+    }
 
 
     //隐藏所有Fragment
@@ -54,23 +64,24 @@ public class MainActivity extends AppCompatActivity {
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            Log.i("碎片：", "点击启动: ");
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             hideAllFragment(transaction);//每次点击后，先把碎片隐藏
+
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-//                    mTextMessage.setText(R.string.title_home);
                     if(f1==null){
                         f1 = new FragmentHome();
-                        transaction.add(R.id.content,f1);//**添加和替换的区别？？？
+                        transaction.add(R.id.content,f1);
                     }else{
                         transaction.show(f1);
                     }
                     transaction.commit();//提交，页面进行变化
-                    return true;//为什么是return true？false呢，是表示这个被点击？
+                    return true;
                 case R.id.navigation_dashboard:
-                    if(f1==null){
+                    if(f2==null){
                         f2 = new FragmentMsg();
-                        transaction.add(R.id.content,f2);//**添加和替换的区别？？？替换会报错，原有Fragment被销毁？？
+                        transaction.add(R.id.content,f2);
                     }else{
                         transaction.show(f2);
                     }
@@ -98,7 +109,6 @@ public class MainActivity extends AppCompatActivity {
                     return true;
 
             }
-
             return false;
         }
     };

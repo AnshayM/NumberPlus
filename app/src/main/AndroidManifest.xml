@@ -22,22 +22,19 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <meta-data
-            android:name="com,baidu.lbsapi.API_KEY"
-            android:value="qcUVDoElsLCsD2k1dZsBnmCP068jxKBA"/>
+        <!--<meta-data-->
+            <!--android:name="com,baidu.lbsapi.API_KEY"-->
+            <!--android:value="qcUVDoElsLCsD2k1dZsBnmCP068jxKBA"/>-->
 
         <activity
             android:name=".activity.MainActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.LocationActivity"></activity>
-       <!-- <service android:name="com.baidu.location.f" android:enabled="true"
-            android:process=":remote"/>-->
+        <activity android:name=".activity.WeatherActivity"/>
 
     </application>
 

@@ -20,6 +20,7 @@ public class FragmentMsg extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_msg,container,false);
+
         textView = (TextView)view.findViewById(R.id.fragmentmsg_tv);
         Log.d("碎片：", "onCreateView2: ");
         return view;
