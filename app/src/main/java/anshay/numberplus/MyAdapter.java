@@ -1,6 +1,9 @@
 package anshay.numberplus;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -73,7 +76,7 @@ public class MyAdapter extends BaseAdapter {
         viewHolder.type.setText(entity.getWeatherType());
         viewHolder.min.setText(entity.getMinTempure());
         viewHolder.max.setText(entity.getMaxTempure()+"℃");
-        viewHolder.icon.setBackgroundResource(R.mipmap.ic_launcher);
+        viewHolder.icon.setImageBitmap(entity.getMbitMap());
         return convertView;
     }
 

@@ -3,10 +3,16 @@ package anshay.numberplus.activity;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.os.Parcelable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -20,6 +26,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -33,6 +42,8 @@ import anshay.numberplus.util.HttpUtil;
 import anshay.numberplus.util.Utility;
 import okhttp3.Callback;
 import okhttp3.Response;
+
+import static anshay.numberplus.R.id.imageView;
 
 
 /**
@@ -60,6 +71,7 @@ public class FragmentHome extends Fragment {
         weatherTypeNow = (TextView) view.findViewById(R.id.weatherTypeNow);
         swiper = (ImageView) view.findViewById(R.id.swiper);
         gridView = (GridView) view.findViewById(R.id.gridView);
+
         /*
         * 获取位置信息
         * */
@@ -94,10 +106,17 @@ public class FragmentHome extends Fragment {
                 bean = new WeatherBean();
                 bean = list.get(position);
                 Intent intent = new Intent(getActivity(), WeatherActivity.class);
-                intent.putExtra("mybean",bean);
+                intent.putExtra("mydate", bean.getMyDate());
+//                intent.putExtra("myCity", city);
+
+
+//                bean = new WeatherBean();
+//                bean = list.get(position);
+//                Intent intent = new Intent(getActivity(), WeatherActivity.class);
+//                Bundle mybundle = new Bundle();
+//                mybundle.putParcelable("mybean", (Parcelable) bean);
 //                intent.putExtra("myDate",bean.getMyDate());
-//                intent.putExtra("myCity",city);
-                startActivity(intent);//先获取到当前的Activity，再做跳转
+//                startActivity(intent);//先获取到当前的Activity，再做跳转
 //                getActivity().finish();
 //                Toast.makeText(getActivity(), bean.getDate(), Toast.LENGTH_SHORT).show();
             }
@@ -165,7 +184,8 @@ public class FragmentHome extends Fragment {
 
     /*获取实时天气，并显示在中间信息栏*/
     public void setNowWeather(Double latitude, Double longitude) {
-        String weatherUrl = "https://free-api.heweather.com/v5/weather?city=" + longitude + "," + latitude + "&key=bc0418b57b2d4918819d3974ac1285d9";
+        String weatherUrl = "https://free-api.heweather.com/v5/weather?city=" + longitude + "," + latitude
+                + "&key=7d600ab4df3d4cad89141901a36dd7e4";
 //        Log.d("sss", weatherUrl);
         HttpUtil.sendOKHttpRequest(weatherUrl, new Callback() {
             @Override
@@ -190,7 +210,6 @@ public class FragmentHome extends Fragment {
                     });
                 }
             }
-
             @Override
             public void onFailure(okhttp3.Call call, IOException e) {//请求失败调用
                 Toast.makeText(getActivity(), "获取天气信息失败", Toast.LENGTH_SHORT).show();
@@ -202,8 +221,10 @@ public class FragmentHome extends Fragment {
     /* 根据经纬度请求天气信息,并存到集合中，为GirdView提供数据*/
     public void setGirdView(Double latitude, Double longitude) {
 //        Log.d("请求天气数据，拿到的weatherId：", weatherId);
+        String myKey = "&key=7d600ab4df3d4cad89141901a36dd7e4";//我的私钥
+        String guoKey = "&key=bc0418b57b2d4918819d3974ac1285d9";//郭大神的私钥
         String weatherUrl = "https://free-api.heweather.com/v5/weather?city=" + latitude + ","
-                + longitude + "&key=bc0418b57b2d4918819d3974ac1285d9";
+                + longitude + myKey;
         HttpUtil.sendOKHttpRequest(weatherUrl, new Callback() {
             @Override
             public void onFailure(okhttp3.Call call, IOException e) {//请求失败调用
@@ -219,6 +240,8 @@ public class FragmentHome extends Fragment {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        ApplicationInfo appInfo = getActivity().getApplicationInfo();
+                        Bitmap bitmap;
                         for (Forecast forecast : weather.forecastList) {
                             WeatherBean mbean = new WeatherBean();
                             mbean.setMyDate(forecast.date);//详细天气信息，用来做传递参数
@@ -226,6 +249,8 @@ public class FragmentHome extends Fragment {
                             String d1 = forecast.date.split("-")[1];//截取月
                             String d2 = forecast.date.split("-")[2];//截取日
                             mbean.setDate(d1 + "月" + d2 + "日");
+                            mbean.setIcon(forecast.more.iconId);
+                            Log.d("getIcon", mbean.getIcon());
                             mbean.setMaxTempure(forecast.temperature.max);//最高温
                             mbean.setMinTempure(forecast.temperature.min);//最低温
                             mbean.setWeatherType(forecast.more.info1);//白天天气种类
@@ -233,19 +258,43 @@ public class FragmentHome extends Fragment {
                             mbean.setDir(forecast.wind.dir);//风向
                             mbean.setSc(forecast.wind.sc);//风向
                             mbean.setSunRise(forecast.sun.sr);//日出
-                            mbean.setSunSet(forecast.sun.sr);//日落
-//                        bean.setIcon(forecast.more.iconNumb);
+                            mbean.setSunSet(forecast.sun.ss);//日落
+
+                            String iconName = "a" + mbean.getIcon();//设置图片名
+                            //第一个参数是图片名，第二个是位置目录，第三个是获取项目中的包
+                            int resID = getResources().getIdentifier(iconName, "mipmap", appInfo.packageName);
+                            bitmap = BitmapFactory.decodeResource(getResources(), resID);
+                            mbean.setMbitMap(bitmap);
                             list.add(mbean);
-//                            Log.d("date", mbean.getDate());
-//                            Log.d("max", mbean.getMaxTempure());
-//                            Log.d("min", mbean.getMinTempure());
-//                            Log.d("type", mbean.getWeatherType());
                         }
                     }
                 });
             }
         });
     }
-
-
+//    public  void getBitmap(String string) {
+//        new Thread(){
+//            @Override
+//            public void run() {
+//                try {
+////                    String ss = "https://cdn.heweather.com/cond_icon/101.png";
+//                    URL url = new URL("https://cdn.heweather.com/cond_icon/" +
+//                            "101" + ".png");
+//                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+//                    InputStream is = conn.getInputStream();
+//                    bitmap = BitmapFactory.decodeStream(is);
+////                    is.close();
+////                    return bitmap;
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }.start();
+//        runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                imageView.setImageBitmap(bitmap);
+//            }
+//        });
+//    }
 }

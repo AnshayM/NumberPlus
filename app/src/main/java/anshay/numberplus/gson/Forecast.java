@@ -41,8 +41,8 @@ public class Forecast {
         public String info1;
         @SerializedName("txt_n")
         public String info2;
-        @SerializedName("code")
-        public String iconNumb;
+        @SerializedName("code_d")
+        public String iconId;
     }
 
 }
