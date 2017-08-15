@@ -10,9 +10,6 @@ import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.os.Parcelable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -26,9 +23,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -89,6 +83,7 @@ public class FragmentHome extends Fragment {
 
         /*调用getLocation()方法调用获取到经纬度*/
         getLocation();
+
          /*中间栏信息更新 */
         setNowWeather(latitude, longitude);//传入拿到的经纬度，调用方法获取实时城市，温度，天气种类信息,并设置到控件中
         setDate();//设置中间栏日期信息
@@ -106,19 +101,9 @@ public class FragmentHome extends Fragment {
                 bean = new WeatherBean();
                 bean = list.get(position);
                 Intent intent = new Intent(getActivity(), WeatherActivity.class);
-                intent.putExtra("mydate", bean.getMyDate());
-//                intent.putExtra("myCity", city);
-
-
-//                bean = new WeatherBean();
-//                bean = list.get(position);
-//                Intent intent = new Intent(getActivity(), WeatherActivity.class);
-//                Bundle mybundle = new Bundle();
-//                mybundle.putParcelable("mybean", (Parcelable) bean);
-//                intent.putExtra("myDate",bean.getMyDate());
-//                startActivity(intent);//先获取到当前的Activity，再做跳转
-//                getActivity().finish();
-//                Toast.makeText(getActivity(), bean.getDate(), Toast.LENGTH_SHORT).show();
+                intent.putExtra("mybean",bean);
+                intent.putExtra("mycity",city);
+                startActivity(intent);//先获取到当前的Activity，再做跳转
             }
         });
 //        Log.d("碎片：", "onCreateView1: ");
@@ -204,8 +189,6 @@ public class FragmentHome extends Fragment {
                             cityName.setText(city);
                             tempureNow.setText(degreeNow);
                             weatherTypeNow.setText(weatherType);
-
-
                         }
                     });
                 }
