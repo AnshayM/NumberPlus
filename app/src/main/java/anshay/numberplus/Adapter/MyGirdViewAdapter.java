@@ -23,7 +23,7 @@ import anshay.numberplus.R;
  * Created by Anshay on 2017/8/13.
  */
 
-public class MyAdapter extends BaseAdapter {
+public class MyGirdViewAdapter extends BaseAdapter {
 
     //定义信息的集合体
     private List<WeatherBean> list;
@@ -33,7 +33,7 @@ public class MyAdapter extends BaseAdapter {
     private LayoutInflater mInflater;
 
     //构造初始化
-    public MyAdapter(Context context, List<WeatherBean> list) {
+    public MyGirdViewAdapter(Context context, List<WeatherBean> list) {
         //上下文，列表信息由调用者传递
         ctx = context;
         this.list = list;

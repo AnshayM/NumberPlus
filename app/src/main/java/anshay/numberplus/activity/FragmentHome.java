@@ -29,7 +29,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import anshay.numberplus.Bean.WeatherBean;
-import anshay.numberplus.Adapter.MyAdapter;
+import anshay.numberplus.Adapter.MyGirdViewAdapter;
 import anshay.numberplus.R;
 import anshay.numberplus.gson.Forecast;
 import anshay.numberplus.gson.Weather;
@@ -53,7 +53,7 @@ public class FragmentHome extends Fragment {
 
     private TextView cityName, date, tempureNow, weatherTypeNow;
     private GridView gridView;
-    private MyAdapter adapter;
+    private MyGirdViewAdapter adapter;
     private WeatherBean bean;
     ArrayList<WeatherBean> list;
     private LocationManager locationManager;
@@ -98,7 +98,7 @@ public class FragmentHome extends Fragment {
         list = new ArrayList<WeatherBean>();//初始化集合
         setGirdView(latitude, longitude);//设置girdView栏数据
 
-        adapter = new MyAdapter(getActivity(), list);    // 初始化适配器
+        adapter = new MyGirdViewAdapter(getActivity(), list);    // 初始化适配器
         gridView.setAdapter(adapter);// gridView与适配器绑定
 
         //子项的点击事件
