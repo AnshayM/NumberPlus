@@ -1,7 +1,8 @@
-package anshay.numberplus;
+package anshay.numberplus.Adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
@@ -15,6 +16,7 @@ import java.util.Date;
 import java.util.List;
 
 import anshay.numberplus.Bean.WeatherBean;
+import anshay.numberplus.R;
 
 
 /**
@@ -65,7 +67,6 @@ public class MyAdapter extends BaseAdapter {
             viewHolder.type = (TextView) convertView.findViewById(R.id.type);
             viewHolder.min = (TextView) convertView.findViewById(R.id.min);
             viewHolder.max = (TextView) convertView.findViewById(R.id.max);
-
             //View的findViewById()方法也是比较耗时的，因此需要考虑只调用一次，
             //之后就用View.getTag()方法来获得ViewHolder对象。
             convertView.setTag(viewHolder);
@@ -75,8 +76,10 @@ public class MyAdapter extends BaseAdapter {
         viewHolder.date.setText(entity.getDate());
         viewHolder.type.setText(entity.getWeatherType());
         viewHolder.min.setText(entity.getMinTempure());
-        viewHolder.max.setText(entity.getMaxTempure()+"℃");
+        viewHolder.max.setText(entity.getMaxTempure() + "℃");
         viewHolder.icon.setImageBitmap(entity.getMbitMap());
+
+        convertView.setBackgroundColor(Color.WHITE);
         return convertView;
     }
 

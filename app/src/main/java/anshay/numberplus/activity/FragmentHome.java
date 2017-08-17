@@ -12,13 +12,14 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,7 +29,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import anshay.numberplus.Bean.WeatherBean;
-import anshay.numberplus.MyAdapter;
+import anshay.numberplus.Adapter.MyAdapter;
 import anshay.numberplus.R;
 import anshay.numberplus.gson.Forecast;
 import anshay.numberplus.gson.Weather;
@@ -37,15 +38,19 @@ import anshay.numberplus.util.Utility;
 import okhttp3.Callback;
 import okhttp3.Response;
 
-import static anshay.numberplus.R.id.imageView;
-
 
 /**
  * Created by Anshay on 2017/8/11.
  */
 public class FragmentHome extends Fragment {
 
-    private ImageView swiper;
+//    private ViewPager viewPager;
+    //    private ViewPagerAdapter pagerAdapter;//构造的pagerAdapter
+//    private PagerAdapter pagerAdapter;
+//    private List<View> viewlist;
+//    ImageView[] dots;
+//    private int[] viewpager_dot_ids={R.id.view_dot_01,R.id.view_dot_02,R.id.view_dot_03};//vierpage部分原点的id集合
+
     private TextView cityName, date, tempureNow, weatherTypeNow;
     private GridView gridView;
     private MyAdapter adapter;
@@ -63,8 +68,10 @@ public class FragmentHome extends Fragment {
         date = (TextView) view.findViewById(R.id.date);
         tempureNow = (TextView) view.findViewById(R.id.tempureNow);
         weatherTypeNow = (TextView) view.findViewById(R.id.weatherTypeNow);
-        swiper = (ImageView) view.findViewById(R.id.swiper);
         gridView = (GridView) view.findViewById(R.id.gridView);
+
+//        initMyView();//初始化顶部Viewpager
+//        initDots();//初始化vierpager中的原点
 
         /*
         * 获取位置信息
@@ -101,14 +108,57 @@ public class FragmentHome extends Fragment {
                 bean = new WeatherBean();
                 bean = list.get(position);
                 Intent intent = new Intent(getActivity(), WeatherActivity.class);
-                intent.putExtra("mybean",bean);
-                intent.putExtra("mycity",city);
+                intent.putExtra("mybean", bean);
+                intent.putExtra("mycity", city);
                 startActivity(intent);//先获取到当前的Activity，再做跳转
             }
         });
 //        Log.d("碎片：", "onCreateView1: ");
         return view;
     }
+
+    private void initDots() {
+
+    }
+
+    /*初始化顶部滑动块*/
+//    private void initMyView() {
+//        LayoutInflater inflater = LayoutInflater.from(getContext());
+//        viewlist = new ArrayList<View>();
+//        viewlist.add(inflater.inflate(R.layout.viewpager1, null));
+//        viewlist.add(inflater.inflate(R.layout.viewpager2, null));
+//        viewlist.add(inflater.inflate(R.layout.viewpager3, null));
+//        //将数据传入适配器
+//        pagerAdapter = new PagerAdapter() {
+//            @Override
+//            public boolean isViewFromObject(View arg0, Object arg1) {
+////                return arg0 == arg1;
+//                //根据传来的key，找到view,判断与传来的参数View arg0是不是同一个视图
+//                return arg0 == viewlist.get((int) Integer.parseInt(arg1.toString()));//将object转为int型
+//            }
+//
+//            @Override
+//            public int getCount() {
+//                return viewlist.size();
+//            }
+//
+//            @Override
+//            public void destroyItem(ViewGroup container, int position, Object object) {
+//                container.removeView(viewlist.get(position));
+//            }
+//
+//
+//            public Object instantiateItem(ViewGroup container, int position) {
+//                container.addView(viewlist.get(position));
+////                return viewList.get(position);
+//                //把当前新增视图的位置（position）作为Key传过去
+//                return position;
+//            }
+//        };
+//        viewPager = (ViewPager) gridView.findViewById(R.id.vierPager);
+//        viewPager.setAdapter(pagerAdapter);
+////        viewPager.setOnPageChangeListener(getActivity().this);//页面变换监听器
+//    }
 
     // 设置日期信息
     private void setDate() {
@@ -162,6 +212,7 @@ public class FragmentHome extends Fragment {
                 Log.i("权限log", "显示位置");
                 latitude = location.getLatitude();
                 longitude = location.getLongitude();
+//                Log.d("经纬度是："+latitude);
             }
         }
 //        return sbBuffer.toString();
@@ -193,6 +244,7 @@ public class FragmentHome extends Fragment {
                     });
                 }
             }
+
             @Override
             public void onFailure(okhttp3.Call call, IOException e) {//请求失败调用
                 Toast.makeText(getActivity(), "获取天气信息失败", Toast.LENGTH_SHORT).show();
@@ -201,13 +253,13 @@ public class FragmentHome extends Fragment {
 
     }
 
-    /* 根据经纬度请求天气信息,并存到集合中，为GirdView提供数据*/
+    /* 根据经纬度请求未来天气信息,并存到集合中，为GirdView提供数据*/
     public void setGirdView(Double latitude, Double longitude) {
 //        Log.d("请求天气数据，拿到的weatherId：", weatherId);
         String myKey = "&key=7d600ab4df3d4cad89141901a36dd7e4";//我的私钥
         String guoKey = "&key=bc0418b57b2d4918819d3974ac1285d9";//郭大神的私钥
         String weatherUrl = "https://free-api.heweather.com/v5/weather?city=" + latitude + ","
-                + longitude + myKey;
+                + longitude + guoKey;
         HttpUtil.sendOKHttpRequest(weatherUrl, new Callback() {
             @Override
             public void onFailure(okhttp3.Call call, IOException e) {//请求失败调用
@@ -280,4 +332,40 @@ public class FragmentHome extends Fragment {
 //            }
 //        });
 //    }
+
+    /*构造适配器*/
+    class ViewPagerAdapter extends PagerAdapter {
+        private List<View> viewList;
+        private Context context;
+
+        public ViewPagerAdapter(List<View> viewList, Context context) {
+            this.viewList = viewList;
+            this.context = context;
+        }
+
+        @Override
+        public void destroyItem(View container, int position, Object object) {
+
+            ((ViewPager) container).removeView(viewList.get(position));
+        }
+
+        @Override
+        public Object instantiateItem(View container, int position) {
+
+            ((ViewPager) container).addView(viewList.get(position));
+            return viewList.get(position);
+        }
+
+        @Override
+        public int getCount() {
+            return viewList.size();
+        }
+
+        @Override
+        public boolean isViewFromObject(View view, Object object) {
+            return (view == object);
+        }
+    }
+
+
 }
