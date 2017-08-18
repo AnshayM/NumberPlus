@@ -8,6 +8,7 @@ import anshay.numberplus.Bean.WeatherBean;
 import anshay.numberplus.R;
 /**
  * Created by Anshay on 2017/8/13.
+ * 天气详情页
  */
 
 public class WeatherActivity extends AppCompatActivity {
@@ -42,7 +43,7 @@ public class WeatherActivity extends AppCompatActivity {
 
         bean = getIntent().getParcelableExtra("mybean");//获取上一个界面传递过来的weatherbean对象
 //        myCity = getIntent().getStringExtra("mycity");
-        Log.d("intent", "收到的intent" + myCity);
+        Log.d("intent", "收到的intent  " + myCity);//为空，待完善
 //        city.setText(getIntent().getExtras("mycity"));
 
         date.setText(bean.getDate());

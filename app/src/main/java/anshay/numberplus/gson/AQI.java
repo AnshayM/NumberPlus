@@ -1,7 +1,7 @@
 package anshay.numberplus.gson;
 
 /**
- * pm2.5
+ * 天气的一些属性，pm2.5和aqi
  */
 
 public class AQI {

@@ -1,4 +1,4 @@
-package anshay.numberplus.activity;
+package anshay.numberplus.Fragment;
 
 import android.Manifest;
 import android.content.Context;
@@ -34,6 +34,7 @@ import java.util.List;
 import anshay.numberplus.Bean.WeatherBean;
 import anshay.numberplus.Adapter.MyGirdViewAdapter;
 import anshay.numberplus.R;
+import anshay.numberplus.activity.WeatherActivity;
 import anshay.numberplus.gson.Forecast;
 import anshay.numberplus.gson.Weather;
 import anshay.numberplus.util.HttpUtil;
@@ -46,17 +47,20 @@ import okhttp3.Response;
  * 首页界面
  */
 public class FragmentHome extends Fragment {
-    private TextView cityName, date, tempureNow, weatherTypeNow;
+    private TextView cityName, date, temperatureNow, weatherTypeNow;
     private GridView gridView;
     private MyGirdViewAdapter adapter;
     private WeatherBean bean;
-    ArrayList<WeatherBean> list;
+    private ArrayList<WeatherBean> list;
     private LocationManager locationManager;
     private String provider;
-    private double latitude, longitude;
+    private double latitude, longitude;//经纬度
     private String city, degreeNow, weatherType;//中间栏关于天气的变量名。
     private Banner banner;
     Integer[] images = {R.mipmap.befor1, R.mipmap.befor2, R.mipmap.befor3, R.mipmap.befor4, R.mipmap.befor5};
+    private String myUrl = "https://free-api.heweather.com/v5/";
+    public String myKey = "&key=7d600ab4df3d4cad89141901a36dd7e4";//我的私钥
+    public String guoKey = "&key=bc0418b57b2d4918819d3974ac1285d9";//郭大神的私钥
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -65,16 +69,16 @@ public class FragmentHome extends Fragment {
         banner = (Banner) view.findViewById(R.id.banner);
         cityName = (TextView) view.findViewById(R.id.city);
         date = (TextView) view.findViewById(R.id.date);
-        tempureNow = (TextView) view.findViewById(R.id.tempureNow);
+        temperatureNow = (TextView) view.findViewById(R.id.temperatureNow);
         weatherTypeNow = (TextView) view.findViewById(R.id.weatherTypeNow);
         gridView = (GridView) view.findViewById(R.id.gridView);
 
-
-        /*获取经纬度*/
-        initLociton();
+        initBanner();//初始化顶部轮播图
+        initLociton();//获取经纬度
 
         /*中间栏天气信息更新 */
         setNowWeather(latitude, longitude);
+
         setDate();//设置中间栏日期信息
 
         list = new ArrayList<WeatherBean>();//初始化集合
@@ -82,7 +86,6 @@ public class FragmentHome extends Fragment {
 
         adapter = new MyGirdViewAdapter(getActivity(), list); // 初始化适配器
         gridView.setAdapter(adapter);// gridView与适配器绑定
-        initBanner();
 
 
         //子项的点击事件
@@ -152,43 +155,43 @@ public class FragmentHome extends Fragment {
     }
 
     // 设置日期信息
-    private void setDate() {
+    public void setDate() {
         Calendar c = Calendar.getInstance();
         String year = String.valueOf(c.get(Calendar.YEAR));
-        String month = String.valueOf(c.get(Calendar.MONTH) + 1);
+        String month = String.valueOf(c.get(Calendar.MONTH) + 1);//去0处理，08月改为8月
         String day = String.valueOf(c.get(Calendar.DAY_OF_MONTH));
         String week = String.valueOf(c.get(Calendar.DAY_OF_WEEK));
-        if ("1".equals(week)) {
-            week = "天";
+        switch (week) {
+            case "1":
+                week = "天";
+                break;
+            case "2":
+                week = "一";
+                break;
+            case "3":
+                week = "二";
+                break;
+            case "4":
+                week = "三";
+                break;
+            case "5":
+                week = "四";
+                break;
+            case "6":
+                week = "五";
+                break;
+            case "7":
+                week = "六";
+                break;
+            default:
+                break;
         }
-        if ("2".equals(week)) {
-            week = "一";
-        }
-        if ("3".equals(week)) {
-            week = "二";
-        }
-        if ("4".equals(week)) {
-            week = "三";
-        }
-        if ("5".equals(week)) {
-            week = "四";
-        }
-        if ("6".equals(week)) {
-            week = "五";
-        }
-        if ("7".equals(week)) {
-            week = "六";
-        }
-        StringBuffer sbBuffer = new StringBuffer();
-        sbBuffer.append("今天是" + year + "年" + month + "月" + day + "日 " + "星期" + week);
-        date.setText(sbBuffer);//获取日期信息
+        date.setText("今天是" + year + "年" + month + "月" + day + "日 " + "星期" + week);//显示日期信息
     }
 
     //设置中间栏实时天气信息
     public void setNowWeather(Double latitude, Double longitude) {
-        String weatherUrl = "https://free-api.heweather.com/v5/weather?city=" + longitude + "," + latitude
-                + "&key=7d600ab4df3d4cad89141901a36dd7e4";
-        //Log.d("sss", weatherUrl);
+        String weatherUrl = myUrl + "weather?city=" + longitude + "," + latitude + myKey;
         HttpUtil.sendOKHttpRequest(weatherUrl, new Callback() {
             @Override
             public void onResponse(okhttp3.Call call, Response response) throws IOException {
@@ -204,7 +207,7 @@ public class FragmentHome extends Fragment {
                         @Override
                         public void run() {
                             cityName.setText(city);
-                            tempureNow.setText(degreeNow);
+                            temperatureNow.setText(degreeNow);
                             weatherTypeNow.setText(weatherType);
                         }
                     });
@@ -221,10 +224,8 @@ public class FragmentHome extends Fragment {
 
     /* 根据经纬度请求未来天气信息,并存到集合中，为GirdView提供数据*/
     public void setGirdView(Double latitude, Double longitude) {
-//        Log.d("请求天气数据，拿到的weatherId：", weatherId);
-        String myKey = "&key=7d600ab4df3d4cad89141901a36dd7e4";//我的私钥
-        String guoKey = "&key=bc0418b57b2d4918819d3974ac1285d9";//郭大神的私钥
-        String weatherUrl = "https://free-api.heweather.com/v5/weather?city=" + latitude + ","
+
+        String weatherUrl = myUrl + "weather?city=" + latitude + ","
                 + longitude + guoKey;
         HttpUtil.sendOKHttpRequest(weatherUrl, new Callback() {
             @Override
@@ -234,7 +235,6 @@ public class FragmentHome extends Fragment {
 
             @Override
             public void onResponse(okhttp3.Call call, Response response) throws IOException {
-                //或用另一种方法，GirdLayout使用addView方法添加子项。
                 final String responseText = response.body().string();
                 final Weather weather = Utility.handleWeatherResponse(responseText);
 
@@ -274,36 +274,9 @@ public class FragmentHome extends Fragment {
         });
     }
 
-    //从网络获取bitmap图
-//    public  void getBitmap(String string) {
-//        new Thread(){
-//            @Override
-//            public void run() {
-//                try {
-////                    String ss = "https://cdn.heweather.com/cond_icon/101.png";
-//                    URL url = new URL("https://cdn.heweather.com/cond_icon/" +
-//                            "101" + ".png");
-//                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-//                    InputStream is = conn.getInputStream();
-//                    bitmap = BitmapFactory.decodeStream(is);
-////                    is.close();
-////                    return bitmap;
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }.start();
-//        runOnUiThread(new Runnable() {
-//            @Override
-//            public void run() {
-//                imageView.setImageBitmap(bitmap);
-//            }
-//        });
-//    }
-
 }
 
-/*重写ImageLoader*/
+/*三方jar包要求重写ImageLoader*/
 class GlideImageLoader extends ImageLoader {
     @Override
     public void displayImage(Context context, Object path, ImageView imageView) {

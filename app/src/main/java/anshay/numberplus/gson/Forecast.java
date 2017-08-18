@@ -3,7 +3,8 @@ package anshay.numberplus.gson;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Created by Administrator on 2017/7/31.
+ * Created by Anshay on 2017/7/31.
+ * 未来天气的基本属性
  */
 
 public class Forecast {

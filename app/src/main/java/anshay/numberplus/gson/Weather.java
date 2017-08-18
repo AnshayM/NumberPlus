@@ -6,6 +6,7 @@ import java.util.List;
 
 /**
  * Created by Administrator on 2017/7/31.
+ * 天气类(从jason数据中解析汇总的类，和WeatherBean相区分)
  */
 
 public class Weather {

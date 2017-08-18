@@ -3,7 +3,7 @@ package anshay.numberplus.gson;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * 实时气温
+ * 实时气温的一些信息
  */
 
 public class Now {

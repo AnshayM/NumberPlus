@@ -11,9 +11,11 @@ import anshay.numberplus.gson.Forecast;
 
 /**
  * Created by Anshay on 2017/8/13.
+ * 天气实体
  */
 
 public class WeatherBean implements Parcelable {//继承接口使其可序列化
+    private String city;
     private String icon;
     private String date;
     private String maxTempure;

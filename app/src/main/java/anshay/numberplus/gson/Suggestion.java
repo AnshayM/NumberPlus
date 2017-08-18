@@ -3,7 +3,7 @@ package anshay.numberplus.gson;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Suggestion
+ * 相关天气的一些建议
  */
 
 public class Suggestion {

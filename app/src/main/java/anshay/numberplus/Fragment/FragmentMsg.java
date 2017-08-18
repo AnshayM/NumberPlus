@@ -1,4 +1,4 @@
-package anshay.numberplus.activity;
+package anshay.numberplus.Fragment;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;

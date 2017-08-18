@@ -3,6 +3,7 @@ package anshay.numberplus.gson;
 import com.google.gson.annotations.SerializedName;
 
 /**
+ * 今日天气基本属性
  * 地区名字和id
  */
 
