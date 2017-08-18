@@ -32,7 +32,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import anshay.numberplus.Bean.WeatherBean;
-import anshay.numberplus.GirdViewNoUsed.MyGirdViewAdapter;
+import anshay.numberplus.Adapter.MyGirdViewAdapter;
 import anshay.numberplus.R;
 import anshay.numberplus.gson.Forecast;
 import anshay.numberplus.gson.Weather;
@@ -43,6 +43,7 @@ import okhttp3.Response;
 
 /**
  * Created by Anshay on 2017/8/11.
+ * 首页界面
  */
 public class FragmentHome extends Fragment {
     private TextView cityName, date, tempureNow, weatherTypeNow;
