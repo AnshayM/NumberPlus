@@ -27,12 +27,12 @@ public class Carousel extends FrameLayout {
     //存放圆点的ImageView
     private List<ImageView> mDotsIV;
     //待显示图片的资源ID
-    private int[] mDrawableIds = {R.mipmap.befor1, R.mipmap.befor2, R.mipmap.befor3, R.mipmap.befor4, R.mipmap.befor5};
+    private int[] mDrawableIds = {R.mipmap.befor5, R.mipmap.befor1, R.mipmap.befor2, R.mipmap.befor3, R.mipmap.befor4, R.mipmap.befor5, R.mipmap.befor1};
     // 设置轮播长度为图片数量
     int len = mDrawableIds.length;
     private ViewPager myViewPager;
-    private boolean isAutoPlay = true;
-    private int currentItem = 0;
+    private boolean isAutoPlay = false;
+    private int currentItem = 1;
 
     private Handler mHandler = new Handler();
 
@@ -61,8 +61,8 @@ public class Carousel extends FrameLayout {
         View view = LayoutInflater.from(mContext).inflate(R.layout.carousel_layout, this, true);
         myViewPager = (ViewPager) view.findViewById(R.id.view_pager);//找到viewpager控件
         LinearLayout mDotsLayout = (LinearLayout) view.findViewById(R.id.dots);//找到引导原点所在的线性布局
-        /**/
-        for (int i = 0; i < len; i++) {
+        /*添加圆点图*/
+        for (int i = 0; i < len-2; i++) {
             ImageView dotIV = new ImageView(mContext);
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -70,6 +70,7 @@ public class Carousel extends FrameLayout {
             params.leftMargin = params.rightMargin = 4;
             mDotsLayout.addView(dotIV, params);//把单个圆点图控件加到mDotsLayout布局中
             mDotsIV.add(dotIV);//向圆点图集合中添加圆点控件实例
+
             if (i == 0) {
                 mDotsIV.get(i).setImageResource(R.drawable.dot_focus);
             } else {
@@ -127,20 +128,21 @@ public class Carousel extends FrameLayout {
             //     功能：该函数用来判断instantiateItem( )函数所返回来的Key与一个页面视图是否是代表的同一个视图
             // 返回值：如果对应的是同一个View，返回True，否则返回False。此处返回一个表达式，相同则为true，不同则为false
             // return arg0 == arg1;//根据传来的key，找到view,判断与传来的参数View arg0是不是同一个视图
-//            return arg0 == views.get((int) Integer.parseInt(arg1.toString()));
-            return arg0 == arg1;
+            return arg0 == views.get((int) Integer.parseInt(arg1.toString()));
+//            return arg0 == arg1;
         }
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
             container.addView(views.get(position));
-//            return position;
-            return views.get(position);
+            return position;
+//            return views.get(position);
         }
 
         @Override
         public void destroyItem(ViewGroup container, int position, Object object) {//从容器中移除页面
-            container.removeView((View) object);
+//            container.removeView((View) object);
+            container.removeView(views.get(position));
         }
 
     }
@@ -156,14 +158,21 @@ public class Carousel extends FrameLayout {
         //页面被选择时
         @Override
         public void onPageSelected(int position) {
+            //根据position来改变页数
+            if (position == 6) {
+                position = 1;
+            } else if (position == 0) {
+                position = 5;
+            }
+
             for (int i = 0; i < mDotsIV.size(); i++) {
-                if (i == position) {
+                if (i == position-1) {
                     mDotsIV.get(i).setImageResource(R.drawable.dot_focus);
                 } else {
                     mDotsIV.get(i).setImageResource(R.drawable.dot_blur);
                 }
             }
-            Log.d("mine","当前位置是: "+ String.valueOf(position));
+            Log.d("mine", "当前位置是: " + String.valueOf(position));
             currentItem = position;
         }
 
@@ -180,46 +189,11 @@ public class Carousel extends FrameLayout {
                 //SCROLL_STATE_SETTLING
                 case 2:
                     //2 settling(安放、定居、解决)，理解为：通过拖动/滑动，安放到了目标页，则 state = ViewPager.SCROLL_STATE_SETTLING
-                    isAutoPlay = true;
-//                    if (isAutoPlay) {
-//                        if (currentItem == 0) {
-//                            currentItem = 5;
-//                            myViewPager.setCurrentItem(currentItem);
-//                            break;
-//                        }
-//                        if (currentItem == 6) {
-//                            currentItem = 1;
-//                            myViewPager.setCurrentItem(currentItem);
-//                            break;
-//                        }
-//                    } else {//手动滑动时
-////                        TopPagerAdapter topPagerAdapter = new TopPagerAdapter();
-////                        currentItem=topPagerAdapter.instantiateItem()
-//                        if (currentItem == 0) {
-//                            currentItem = 5;
-//                            myViewPager.setCurrentItem(currentItem);
-//                            break;
-//                        }
-//                        if (currentItem == 6) {
-//                            currentItem = 1;
-//                            myViewPager.setCurrentItem(currentItem);
-//                            break;
-//                        }
-//                    }
-//                    if (!isAutoPlay&&currentItem ==views.size()) {
-//                        Log.d("滑动状态", "手动滑动安放前:"+String.valueOf(currentItem));
-//                        currentItem = currentItem  % (views.size());
-//                        myViewPager.setCurrentItem(currentItem);
-//                        Log.d("滑动状态","手动滑动安放后:"+ String.valueOf(currentItem));
-//                    }
-//                    Log.d("滑动状态", "自动滑动安放:"+String.valueOf(currentItem));
-
+                    Log.d("mine", "安定以及之前的位置:" + String.valueOf(currentItem));
                     break;
-
                 case 0:
                     //0 idle(空闲，挂空挡)， 理解为：只要拖动/滑动结束，无论是否安放到了目标页，则 state = ViewPager.SCROLL_STATE_IDLE
-//                    isAutoPlay = true;//这个时候开始自动滑动
-
+                    isAutoPlay = true;//这个时候开始自动滑动
                     Log.d("mine", "空档:" + String.valueOf(currentItem));
                     break;
                 default:

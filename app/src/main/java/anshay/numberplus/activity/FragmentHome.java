@@ -12,16 +12,19 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
+import com.youth.banner.Banner;
+import com.youth.banner.loader.ImageLoader;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -29,7 +32,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import anshay.numberplus.Bean.WeatherBean;
-import anshay.numberplus.Adapter.MyGirdViewAdapter;
+import anshay.numberplus.GirdViewNoUsed.MyGirdViewAdapter;
 import anshay.numberplus.R;
 import anshay.numberplus.gson.Forecast;
 import anshay.numberplus.gson.Weather;
@@ -38,19 +41,10 @@ import anshay.numberplus.util.Utility;
 import okhttp3.Callback;
 import okhttp3.Response;
 
-
 /**
  * Created by Anshay on 2017/8/11.
  */
 public class FragmentHome extends Fragment {
-
-//    private ViewPager viewPager;
-    //    private ViewPagerAdapter pagerAdapter;//构造的pagerAdapter
-//    private PagerAdapter pagerAdapter;
-//    private List<View> viewlist;
-//    ImageView[] dots;
-//    private int[] viewpager_dot_ids={R.id.view_dot_01,R.id.view_dot_02,R.id.view_dot_03};//vierpage部分原点的id集合
-
     private TextView cityName, date, tempureNow, weatherTypeNow;
     private GridView gridView;
     private MyGirdViewAdapter adapter;
@@ -60,22 +54,68 @@ public class FragmentHome extends Fragment {
     private String provider;
     private double latitude, longitude;
     private String city, degreeNow, weatherType;//中间栏关于天气的变量名。
+    private Banner banner;
+    Integer[] images = {R.mipmap.befor1, R.mipmap.befor2, R.mipmap.befor3, R.mipmap.befor4, R.mipmap.befor5};
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
+
+        banner = (Banner) view.findViewById(R.id.banner);
         cityName = (TextView) view.findViewById(R.id.city);
         date = (TextView) view.findViewById(R.id.date);
         tempureNow = (TextView) view.findViewById(R.id.tempureNow);
         weatherTypeNow = (TextView) view.findViewById(R.id.weatherTypeNow);
         gridView = (GridView) view.findViewById(R.id.gridView);
 
-//        initMyView();//初始化顶部Viewpager
-//        initDots();//初始化vierpager中的原点
 
-        /*
-        * 获取位置信息
-        * */
+        /*获取经纬度*/
+        initLociton();
+
+        /*中间栏天气信息更新 */
+        setNowWeather(latitude, longitude);
+        setDate();//设置中间栏日期信息
+
+        list = new ArrayList<WeatherBean>();//初始化集合
+        setGirdView(latitude, longitude);//设置girdView栏数据
+
+        adapter = new MyGirdViewAdapter(getActivity(), list); // 初始化适配器
+        gridView.setAdapter(adapter);// gridView与适配器绑定
+        initBanner();
+
+
+        //子项的点击事件
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                bean = new WeatherBean();
+                bean = list.get(position);
+                Intent intent = new Intent(getActivity(), WeatherActivity.class);
+                intent.putExtra("mybean", bean);
+                Log.d("intent", city);
+                intent.putExtra("mycity", city);
+                startActivity(intent);//先获取到当前的Activity，再做跳转
+            }
+        });
+        return view;
+    }
+
+    /*轮播图*/
+    public void initBanner() {
+        //设置图片加载器
+        banner.setImageLoader(new GlideImageLoader());
+        //设置图片集合
+        List<Integer> intList = new ArrayList<Integer>();
+        for (int index = 0; index < images.length; index++) {
+            intList.add(images[index]);
+        }
+        banner.setImages(intList);
+        //banner设置方法全部调用完毕时最后调用
+        banner.start();
+    }
+
+    /*获取经纬度*/
+    public void initLociton() {
         locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         List<String> providerList = locationManager.getProviders(true);//获取所有可用的位置提供器，传入True表示只有启用的位置提供器才会被返回
         if (providerList.contains(LocationManager.GPS_PROVIDER)) {
@@ -88,77 +128,27 @@ public class FragmentHome extends Fragment {
             Toast.makeText(getActivity(), "no location provider to use", Toast.LENGTH_SHORT).show();
         }
 
-        /*调用getLocation()方法调用获取到经纬度*/
-        getLocation();
-
-         /*中间栏信息更新 */
-        setNowWeather(latitude, longitude);//传入拿到的经纬度，调用方法获取实时城市，温度，天气种类信息,并设置到控件中
-        setDate();//设置中间栏日期信息
-
-        list = new ArrayList<WeatherBean>();//初始化集合
-        setGirdView(latitude, longitude);//设置girdView栏数据
-
-        adapter = new MyGirdViewAdapter(getActivity(), list);    // 初始化适配器
-        gridView.setAdapter(adapter);// gridView与适配器绑定
-
-        //子项的点击事件
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                bean = new WeatherBean();
-                bean = list.get(position);
-                Intent intent = new Intent(getActivity(), WeatherActivity.class);
-                intent.putExtra("mybean", bean);
-                intent.putExtra("mycity", city);
-                startActivity(intent);//先获取到当前的Activity，再做跳转
+        int permissionCheck = ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION);
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+            Log.i("权限log", "没有权限");
+            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
+                    Manifest.permission.ACCESS_FINE_LOCATION)) {
+                Log.i("权限log", "拒绝声明");
+                Toast.makeText(getActivity(), "u had rejected the request", Toast.LENGTH_SHORT).show();
+            } else {
+                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
             }
-        });
-//        Log.d("碎片：", "onCreateView1: ");
-        return view;
+        } else {//如果有权限，就直接进行事件处理
+            Log.i("权限log", "有权限");
+            Location location = locationManager.getLastKnownLocation(provider);
+            if (location != null) {
+                Log.i("权限log", "显示位置");
+                latitude = location.getLatitude();
+                longitude = location.getLongitude();
+                // Log.d("经纬度是："+latitude);
+            }
+        }
     }
-
-    private void initDots() {
-
-    }
-
-    /*初始化顶部滑动块*/
-//    private void initMyView() {
-//        LayoutInflater inflater = LayoutInflater.from(getContext());
-//        viewlist = new ArrayList<View>();
-//        viewlist.add(inflater.inflate(R.layout.viewpager1, null));
-//        viewlist.add(inflater.inflate(R.layout.viewpager2, null));
-//        viewlist.add(inflater.inflate(R.layout.viewpager3, null));
-//        //将数据传入适配器
-//        pagerAdapter = new PagerAdapter() {
-//            @Override
-//            public boolean isViewFromObject(View arg0, Object arg1) {
-////                return arg0 == arg1;
-//                //根据传来的key，找到view,判断与传来的参数View arg0是不是同一个视图
-//                return arg0 == viewlist.get((int) Integer.parseInt(arg1.toString()));//将object转为int型
-//            }
-//
-//            @Override
-//            public int getCount() {
-//                return viewlist.size();
-//            }
-//
-//            @Override
-//            public void destroyItem(ViewGroup container, int position, Object object) {
-//                container.removeView(viewlist.get(position));
-//            }
-//
-//
-//            public Object instantiateItem(ViewGroup container, int position) {
-//                container.addView(viewlist.get(position));
-////                return viewList.get(position);
-//                //把当前新增视图的位置（position）作为Key传过去
-//                return position;
-//            }
-//        };
-//        viewPager = (ViewPager) gridView.findViewById(R.id.vierPager);
-//        viewPager.setAdapter(pagerAdapter);
-////        viewPager.setOnPageChangeListener(getActivity().this);//页面变换监听器
-//    }
 
     // 设置日期信息
     private void setDate() {
@@ -193,36 +183,11 @@ public class FragmentHome extends Fragment {
         date.setText(sbBuffer);//获取日期信息
     }
 
-    //获取经纬度信息
-    private void getLocation() {
-        int permissionCheck = ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION);
-        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
-            Log.i("权限log", "没有权限");
-            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
-                    Manifest.permission.ACCESS_FINE_LOCATION)) {
-                Log.i("权限log", "拒绝声明");
-                Toast.makeText(getActivity(), "u had rejected the request", Toast.LENGTH_SHORT).show();
-            } else {
-                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-            }
-        } else {//如果有权限，就直接进行事件处理
-            Log.i("权限log", "有权限");
-            Location location = locationManager.getLastKnownLocation(provider);
-            if (location != null) {
-                Log.i("权限log", "显示位置");
-                latitude = location.getLatitude();
-                longitude = location.getLongitude();
-//                Log.d("经纬度是："+latitude);
-            }
-        }
-//        return sbBuffer.toString();
-    }
-
-    /*获取实时天气，并显示在中间信息栏*/
+    //设置中间栏实时天气信息
     public void setNowWeather(Double latitude, Double longitude) {
         String weatherUrl = "https://free-api.heweather.com/v5/weather?city=" + longitude + "," + latitude
                 + "&key=7d600ab4df3d4cad89141901a36dd7e4";
-//        Log.d("sss", weatherUrl);
+        //Log.d("sss", weatherUrl);
         HttpUtil.sendOKHttpRequest(weatherUrl, new Callback() {
             @Override
             public void onResponse(okhttp3.Call call, Response response) throws IOException {
@@ -307,6 +272,8 @@ public class FragmentHome extends Fragment {
             }
         });
     }
+
+    //从网络获取bitmap图
 //    public  void getBitmap(String string) {
 //        new Thread(){
 //            @Override
@@ -333,39 +300,33 @@ public class FragmentHome extends Fragment {
 //        });
 //    }
 
-    /*构造适配器*/
-    class ViewPagerAdapter extends PagerAdapter {
-        private List<View> viewList;
-        private Context context;
+}
 
-        public ViewPagerAdapter(List<View> viewList, Context context) {
-            this.viewList = viewList;
-            this.context = context;
-        }
-
-        @Override
-        public void destroyItem(View container, int position, Object object) {
-
-            ((ViewPager) container).removeView(viewList.get(position));
-        }
-
-        @Override
-        public Object instantiateItem(View container, int position) {
-
-            ((ViewPager) container).addView(viewList.get(position));
-            return viewList.get(position);
-        }
-
-        @Override
-        public int getCount() {
-            return viewList.size();
-        }
-
-        @Override
-        public boolean isViewFromObject(View view, Object object) {
-            return (view == object);
-        }
+/*重写ImageLoader*/
+class GlideImageLoader extends ImageLoader {
+    @Override
+    public void displayImage(Context context, Object path, ImageView imageView) {
+        /**
+         注意：
+         1.图片加载器由自己选择，这里不限制，只是提供几种使用方法
+         2.返回的图片路径为Object类型，由于不能确定你到底使用的那种图片加载器，
+         传输的到的是什么格式，那么这种就使用Object接收和返回，你只需要强转成你传输的类型就行，
+         切记不要胡乱强转！
+         */
+//        eg：
+        //Glide 加载图片简单用法
+        Glide.with(context).load(path).into(imageView);
+        //Picasso 加载图片简单用法
+//        Picasso.with(context).load(path).into(imageView);
+//        用fresco加载图片简单用法，记得要写下面的createImageView方法
+//        Uri uri = Uri.parse((String) path);
+//        imageView.setImageURI(uri);
     }
-
-
+    //提供createImageView 方法，如果不用可以不重写这个方法，主要是方便自定义ImageView的创建
+//    @Override
+//    public ImageView createImageView(Context context) {
+//        //使用fresco，需要创建它提供的ImageView，当然你也可以用自己自定义的具有图片加载功能的ImageView
+//        SimpleDraweeView simpleDraweeView=new SimpleDraweeView(context);
+//        return simpleDraweeView;
+//    }
 }

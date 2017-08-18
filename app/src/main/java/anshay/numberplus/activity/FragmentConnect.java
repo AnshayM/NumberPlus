@@ -11,15 +11,16 @@ import anshay.numberplus.R;
 
 /**
  * Created by Anshay on 2017/8/11.
+ *联系人界面
  */
 
 public class FragmentConnect extends Fragment{
-    private TextView textView;
+    private TextView mView;//页面介绍
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_connect,container,false);
-        textView = (TextView)view.findViewById(R.id.fragmentConnect_tv);
+        mView = (TextView)view.findViewById(R.id.fragmentConnect_tv);
         return view;
     }
 }

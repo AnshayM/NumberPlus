@@ -12,11 +12,18 @@
         android:layout_alignParentTop="true"
         android:background="#ccc">
 
-        <!--顶部轮播自定义控件-->
-        <anshay.numberplus.Carousel
-            android:id="@+id/carousel"
+
+        <!--&lt;!&ndash;顶部轮播三方控件&ndash;&gt;-->
+        <com.youth.banner.Banner
+            android:id="@+id/banner"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="200dp"/>
+
+        <!--&lt;!&ndash;顶部轮播自定义控件&ndash;&gt;-->
+        <!--<anshay.numberplus.Carousel-->
+        <!--android:id="@+id/carousel"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent" />-->
 
     </RelativeLayout>
 
@@ -25,9 +32,9 @@
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:layout_alignEnd="@+id/gridView"
         android:layout_below="@+id/layout1"
-        android:layout_alignEnd="@+id/gridView">
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -68,6 +75,7 @@
                 android:layout_height="wrap_content"
                 android:text="degree" />
         </LinearLayout>
+
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="10dp"
@@ -79,16 +87,14 @@
         android:id="@+id/gridView"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:gravity="center"
-        android:layout_below="@+id/linearLayout"
         android:layout_above="@+id/line_view"
+        android:layout_below="@+id/linearLayout"
         android:background="#DCDCDC"
-        android:stretchMode="columnWidth"
+        android:gravity="center"
         android:horizontalSpacing="1dp"
-        android:verticalSpacing="1dp"
         android:numColumns="4"
-        >
-    </GridView>
+        android:stretchMode="columnWidth"
+        android:verticalSpacing="1dp"></GridView>
 
 
     <ImageView

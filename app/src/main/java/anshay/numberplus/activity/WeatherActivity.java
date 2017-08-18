@@ -1,45 +1,35 @@
 package anshay.numberplus.activity;
 
-import android.content.pm.ApplicationInfo;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import java.io.IOException;
-
 import anshay.numberplus.Bean.WeatherBean;
 import anshay.numberplus.R;
-import anshay.numberplus.gson.Forecast;
-import anshay.numberplus.gson.Weather;
-import anshay.numberplus.util.HttpUtil;
-import anshay.numberplus.util.Utility;
-import okhttp3.Callback;
-import okhttp3.Response;
-
 /**
  * Created by Anshay on 2017/8/13.
  */
 
 public class WeatherActivity extends AppCompatActivity {
-    private TextView date;
-    private TextView min;
-    private TextView max;
-    private TextView type1;
-    private TextView type2;
+    private TextView date;//日期
+    private TextView min;//最低温
+    private TextView max;//最高温
+    private TextView type1;//白天天气
+    private TextView type2;//晚上天气
     private TextView dir;//风向
     private TextView sc;//风速
-    private TextView sunrise;
-    private TextView sunset;
-    private WeatherBean bean;
+    private TextView sunrise;//日出时间
+    private TextView sunset;//日落时间
+    private WeatherBean bean;//天气实体类
+    private TextView city;
+    private String myCity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_weather);
+
+        city = (TextView) findViewById(R.id.city);
         date = (TextView) findViewById(R.id.mDate);
         min = (TextView) findViewById(R.id.min);
         max = (TextView) findViewById(R.id.max);
@@ -51,6 +41,9 @@ public class WeatherActivity extends AppCompatActivity {
         sunset = (TextView) findViewById(R.id.ss);
 
         bean = getIntent().getParcelableExtra("mybean");//获取上一个界面传递过来的weatherbean对象
+//        myCity = getIntent().getStringExtra("mycity");
+        Log.d("intent", "收到的intent" + myCity);
+//        city.setText(getIntent().getExtras("mycity"));
 
         date.setText(bean.getDate());
         min.setText(bean.getMinTempure());
