@@ -15,12 +15,12 @@ import anshay.numberplus.R;
  */
 
 public class FragmentSetting extends Fragment{
-    private TextView textView;
+    private TextView mtv;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_setting,container,false);
-        textView = (TextView)view.findViewById(R.id.fragmentSetting_tv);
+        mtv = (TextView)view.findViewById(R.id.fragmentSetting_tv);
         return view;
     }
 }

@@ -17,6 +17,7 @@ import anshay.numberplus.R;
 
 /**
  * Created by Anshay on 2017/8/13.
+ * girdView的适配器
  */
 
 public class MyGirdViewAdapter extends BaseAdapter {
@@ -70,9 +71,9 @@ public class MyGirdViewAdapter extends BaseAdapter {
             viewHolder = (ViewHolder) convertView.getTag();
         }
         viewHolder.date.setText(entity.getDate());
-        viewHolder.type.setText(entity.getWeatherType());
-        viewHolder.min.setText(entity.getMinTempure());
-        viewHolder.max.setText(entity.getMaxTempure() + "℃");
+        viewHolder.type.setText(entity.getWeatherType1());
+        viewHolder.min.setText(entity.getMinTemperature());
+        viewHolder.max.setText(entity.getMaxTemperature() + "℃");
         viewHolder.icon.setImageBitmap(entity.getMbitMap());
 
         convertView.setBackgroundColor(Color.WHITE);

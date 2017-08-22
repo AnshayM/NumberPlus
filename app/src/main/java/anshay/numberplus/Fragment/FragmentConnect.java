@@ -15,12 +15,12 @@ import anshay.numberplus.R;
  */
 
 public class FragmentConnect extends Fragment{
-    private TextView mView;//页面介绍
+    private TextView mtv;//页面介绍
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_connect,container,false);
-        mView = (TextView)view.findViewById(R.id.fragmentConnect_tv);
+        mtv = (TextView)view.findViewById(R.id.fragmentConnect_tv);
         return view;
     }
 }

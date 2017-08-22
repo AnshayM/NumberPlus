@@ -15,21 +15,56 @@ import anshay.numberplus.gson.Forecast;
  */
 
 public class WeatherBean implements Parcelable {//继承接口使其可序列化
+    private int id;
     private String city;
     private String icon;
     private String date;
-    private String maxTempure;
-    private String minTempure;
+    private String maxTemperature;
+    private String minTemperature;
     private String weatherType1;
-    private String weatherType;
-    private String myDate;
+    private String weatherType2;
     private String sunRise;
     private String sunSet;
     private String dir;//风向
     private String sc;//风速
     private Bitmap mbitMap;
+    private String nowTemperature;
+    private String weatherTypeNow;
 
-    public WeatherBean() {}//重写了Paraclabel接口，无参构造函数需自己写
+    public WeatherBean() {
+    }//重写了Paraclabel接口，无参构造函数需自己写
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getNowTemperature() {
+        return nowTemperature;
+    }
+
+    public void setNowTemperature(String nowTemperature) {
+        this.nowTemperature = nowTemperature;
+    }
+
+    public String getWeatherTypeNow() {
+        return weatherTypeNow;
+    }
+
+    public void setWeatherTypeNow(String weatherTypeNow) {
+        this.weatherTypeNow = weatherTypeNow;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
 
     public Bitmap getMbitMap() {
         return mbitMap;
@@ -37,14 +72,6 @@ public class WeatherBean implements Parcelable {//继承接口使其可序列化
 
     public void setMbitMap(Bitmap mbitMap) {
         this.mbitMap = mbitMap;
-    }
-
-    public String getMyDate() {
-        return myDate;
-    }
-
-    public void setMyDate(String myDate) {
-        this.myDate = myDate;
     }
 
     public String getWeatherType1() {
@@ -103,32 +130,32 @@ public class WeatherBean implements Parcelable {//继承接口使其可序列化
         this.icon = icon;
     }
 
-    public String getMaxTempure() {
-        return maxTempure;
+    public String getMaxTemperature() {
+        return maxTemperature;
     }
 
-    public void setMaxTempure(String maxTempure) {
-        this.maxTempure = maxTempure;
+    public void setMaxTemperature(String maxTemperature) {
+        this.maxTemperature = maxTemperature;
     }
 
-    public String getMinTempure() {
-        return minTempure;
+    public String getMinTemperature() {
+        return minTemperature;
     }
 
-    public void setMinTempure(String minTempure) {
-        this.minTempure = minTempure;
+    public void setMinTemperature(String minTemperature) {
+        this.minTemperature = minTemperature;
     }
 
-    public String getWeatherType() {
-        return weatherType;
+    public String getWeatherType2() {
+        return weatherType2;
     }
 
-    public void setWeatherType(String weatherType) {
-        this.weatherType = weatherType;
+    public void setWeatherType2(String weatherType2) {
+        this.weatherType2 = weatherType2;
     }
 
 
-    //以下为实习Parcelable接口固定写法
+    //以下为实现Parcelable接口固定写法
     @Override
     public int describeContents() {
         return 0;
@@ -136,13 +163,15 @@ public class WeatherBean implements Parcelable {//继承接口使其可序列化
 
     @Override
     public void writeToParcel(Parcel out, int flags) {
+        out.writeString(weatherTypeNow);
+        out.writeString(nowTemperature);
+        out.writeString(city);
         out.writeString(icon);
         out.writeString(date);
-        out.writeString(maxTempure);
-        out.writeString(minTempure);
+        out.writeString(maxTemperature);
+        out.writeString(minTemperature);
         out.writeString(weatherType1);
-        out.writeString(weatherType);
-        out.writeString(myDate);
+        out.writeString(weatherType2);
         out.writeString(sunRise);
         out.writeString(sunSet);
         out.writeString(dir);
@@ -163,13 +192,15 @@ public class WeatherBean implements Parcelable {//继承接口使其可序列化
     };
 
     public WeatherBean(Parcel in) {
+        nowTemperature = in.readString();
+        weatherTypeNow = in.readString();
+        city = in.readString();
         icon = in.readString();
         date = in.readString();
-        maxTempure = in.readString();
-        minTempure = in.readString();
+        maxTemperature = in.readString();
+        minTemperature = in.readString();
         weatherType1 = in.readString();
-        weatherType = in.readString();
-        myDate = in.readString();
+        weatherType2 = in.readString();
         sunRise = in.readString();
         sunSet = in.readString();
         dir = in.readString();

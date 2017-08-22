@@ -23,7 +23,6 @@ public class WeatherActivity extends AppCompatActivity {
     private TextView sunset;//日落时间
     private WeatherBean bean;//天气实体类
     private TextView city;
-    private String myCity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,15 +41,13 @@ public class WeatherActivity extends AppCompatActivity {
         sunset = (TextView) findViewById(R.id.ss);
 
         bean = getIntent().getParcelableExtra("mybean");//获取上一个界面传递过来的weatherbean对象
-//        myCity = getIntent().getStringExtra("mycity");
-        Log.d("intent", "收到的intent  " + myCity);//为空，待完善
-//        city.setText(getIntent().getExtras("mycity"));
 
+        city.setText(bean.getCity());
         date.setText(bean.getDate());
-        min.setText(bean.getMinTempure());
-        max.setText(bean.getMaxTempure());
-        type1.setText(bean.getWeatherType());//白天
-        type2.setText(bean.getWeatherType1());//夜间
+        min.setText(bean.getMinTemperature());
+        max.setText(bean.getMaxTemperature());
+        type1.setText(bean.getWeatherType1());//白天
+        type2.setText(bean.getWeatherType2());//夜间
         sunrise.setText(bean.getSunRise());
         sunset.setText(bean.getSunSet());
         dir.setText(bean.getDir());//风向
