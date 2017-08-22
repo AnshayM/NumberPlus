@@ -20,7 +20,7 @@ import anshay.numberplus.R;
  * girdView的适配器
  */
 
-public class MyGirdViewAdapter extends BaseAdapter {
+public class MyGridViewAdapter extends BaseAdapter {
 
     //定义信息的集合体
     private List<WeatherBean> list;
@@ -30,7 +30,7 @@ public class MyGirdViewAdapter extends BaseAdapter {
     private LayoutInflater mInflater;
 
     //构造初始化
-    public MyGirdViewAdapter(Context context, List<WeatherBean> list) {
+    public MyGridViewAdapter(Context context, List<WeatherBean> list) {
         //上下文，列表信息由调用者传递
         ctx = context;
         this.list = list;
@@ -74,6 +74,7 @@ public class MyGirdViewAdapter extends BaseAdapter {
         viewHolder.type.setText(entity.getWeatherType1());
         viewHolder.min.setText(entity.getMinTemperature());
         viewHolder.max.setText(entity.getMaxTemperature() + "℃");
+
         viewHolder.icon.setImageBitmap(entity.getMbitMap());
 
         convertView.setBackgroundColor(Color.WHITE);
