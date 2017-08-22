@@ -17,7 +17,7 @@ import anshay.numberplus.Bean.WeatherBean;
  */
 
 public class MOperator {
-    String TAG = "MOperator";// LogCat标签
+    String TAG = "Mine";// LogCat标签
     DatabaseOpenHelper dbHelp;// 数据库适配变量
     SQLiteDatabase db;// 数据库访问变量
     // 构造函数
@@ -87,7 +87,7 @@ public class MOperator {
         db = dbHelp.getReadableDatabase();
         Cursor cursor;
         cursor = db.query(DatabaseOpenHelper.TableWeather, null, null, null, null, null, null);
-        Log.d( "mine", String.valueOf(cursor.moveToNext()));
+        Log.d( TAG+"queryAll:", String.valueOf(cursor.moveToNext()));
 
         while (cursor.moveToNext()) {
             bean = new WeatherBean();
@@ -111,7 +111,7 @@ public class MOperator {
         }
         db.close();
         cursor.close();
-        Log.i(TAG + "quary", "return");
+        Log.i(TAG + "queryAll", "完成数据库查询");
         return list;
     }
 

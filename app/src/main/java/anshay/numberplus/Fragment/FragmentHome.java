@@ -50,6 +50,7 @@ import okhttp3.Response;
  * 首页界面
  */
 public class FragmentHome extends Fragment implements AdapterView.OnItemClickListener {
+    private String TAG = "mine";//log标签
     private TextView cityName, date, temperatureNow, weatherTypeNow;
     private GridView gridView;
     private MyGridViewAdapter adapter;//gridView适配器
@@ -58,7 +59,7 @@ public class FragmentHome extends Fragment implements AdapterView.OnItemClickLis
     private LocationManager locationManager;
     private Banner banner;//轮播图控件
 
-    Integer[] images = {R.mipmap.befor1, R.mipmap.befor2, R.mipmap.befor3, R.mipmap.befor4, R.mipmap.befor5};//轮播图资源文件
+    Integer[] images = { R.mipmap.befor1, R.mipmap.befor2, R.mipmap.befor3, R.mipmap.befor4, R.mipmap.befor5};//轮播图资源文件
     private String myUrl = "https://free-api.heweather.com/v5/";//接口网址
     public String myKey = "&key=7d600ab4df3d4cad89141901a36dd7e4";//我的私钥
     public String guoKey = "&key=bc0418b57b2d4918819d3974ac1285d9";//郭大神的私钥
@@ -158,33 +159,37 @@ public class FragmentHome extends Fragment implements AdapterView.OnItemClickLis
 
     /*获取经纬度*/
     public void initLocation() {
-
         locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         List<String> providerList = locationManager.getProviders(true);//获取所有可用的位置提供器，传入True表示只有启用的位置提供器才会被返回
         if (providerList.contains(LocationManager.GPS_PROVIDER)) {
             provider = locationManager.GPS_PROVIDER;
+            Log.i(TAG+"权限log", "gps");
         } else if (providerList.contains(locationManager.NETWORK_PROVIDER)) {
             provider = locationManager.NETWORK_PROVIDER;
+            Log.i(TAG+"权限log", "internet");
         } else {
             Toast.makeText(getActivity(), "no location provider to use", Toast.LENGTH_SHORT).show();
         }
         //获取运时权限
         int permissionCheck = ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION);
         if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
-                    Manifest.permission.ACCESS_FINE_LOCATION)) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)) {
                 Toast.makeText(getActivity(), "你拒绝了权限请求", Toast.LENGTH_SHORT).show();
             } else {
                 ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+                Log.i(TAG+"权限log", "正在请求权限");
             }
         } else {//如果有权限，就直接进行事件处理
-            Log.i("权限log", "有权限");
-
+            Log.i(TAG+"权限log", "有权限");
             Location location = locationManager.getLastKnownLocation(provider);
             if (location != null) {
-                Log.i("权限log", "显示位置");
+                Log.i(TAG+"权限log", "显示位置");
                 latitude = location.getLatitude();
                 longitude = location.getLongitude();
+                Log.i(TAG+"纬度", String.valueOf(latitude));
+                Log.i(TAG+"经度", String.valueOf(longitude));
+
+
             }
         }
     }

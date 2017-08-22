@@ -16,15 +16,11 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/my_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
-        <!--<meta-data-->
-            <!--android:name="com,baidu.lbsapi.API_KEY"-->
-            <!--android:value="qcUVDoElsLCsD2k1dZsBnmCP068jxKBA"/>-->
 
         <activity
             android:name=".activity.MainActivity"
