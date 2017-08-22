@@ -5,19 +5,18 @@
     android:orientation="vertical">
 
     <RelativeLayout
-        android:id="@+id/layout1"
+        android:id="@+id/layout_banner"
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:background="#ccc">
 
-
         <!--&lt;!&ndash;顶部轮播三方控件&ndash;&gt;-->
         <com.youth.banner.Banner
             android:id="@+id/banner"
             android:layout_width="match_parent"
-            android:layout_height="200dp"/>
+            android:layout_height="200dp" />
 
     </RelativeLayout>
 
@@ -26,8 +25,8 @@
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/gridView"
-        android:layout_below="@+id/layout1"
+        android:layout_alignEnd="@+id/refresh"
+        android:layout_below="@+id/layout_banner"
         android:orientation="vertical">
 
         <LinearLayout
@@ -70,27 +69,35 @@
                 android:text="degree" />
         </LinearLayout>
 
+        <!--绘制的一条线-->
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="10dp"
             android:background="#DCDCDC" />
     </LinearLayout>
+    <!--GridView-->
+    <LinearLayout
+        android:id="@+id/refresh"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/line_view"
+        android:layout_below="@+id/linearLayout">
 
+        <GridView
+            android:id="@+id/gridView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentStart="true"
+            android:background="#DCDCDC"
+            android:gravity="center"
+            android:horizontalSpacing="1dp"
+            android:numColumns="4"
+            android:stretchMode="columnWidth"
+            android:verticalSpacing="1dp" />
 
-    <GridView
-        android:id="@+id/gridView"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:background="#DCDCDC"
-        android:gravity="center"
-        android:horizontalSpacing="1dp"
-        android:numColumns="4"
-        android:stretchMode="columnWidth"
-        android:verticalSpacing="1dp"
-        android:layout_below="@+id/linearLayout"
-        android:layout_alignParentStart="true"></GridView>
+    </LinearLayout>
 
-
+    <!--底部的一条线-->
     <ImageView
         android:id="@+id/line_view"
         android:layout_width="match_parent"

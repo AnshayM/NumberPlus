@@ -1,4 +1,4 @@
-package anshay.numberplus.DB;
+package anshay.numberplus.OpenHelper;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -35,13 +35,12 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
         String sql = "Create Table "
                 + TableWeather
                 + "(id integer primary key autoincrement," +
-                "city varchar(100),date varchar(100)," +
-                "max varchar(100),min varchar(100)," +
+                "city varchar(100), date varchar(100)," +
+                "max varchar(100), min varchar(100)," +
                 "type1 varchar(100),type2 varchar(100)," +
-                "typenow varchar(100),nowtemperature varchar(100)," +
-                "sunrise varchar(100),sunset varchar(100)," +
-                "dir varchar(100),sc varchar(100)," +"icon varchar(100),"+
-                "photo char(20) )";
+                "typenow varchar(100), nowtemperature varchar(100)," +
+                "sunrise varchar(100), sunset varchar(100)," +
+                "dir varchar(100), sc varchar(100)," +"icon varchar(100) )";
         db.execSQL(sql);
 
     }

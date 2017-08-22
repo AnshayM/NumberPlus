@@ -14,6 +14,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,7 +36,7 @@ import java.util.List;
 
 import anshay.numberplus.Bean.WeatherBean;
 import anshay.numberplus.Adapter.MyGridViewAdapter;
-import anshay.numberplus.DB.MOperator;
+import anshay.numberplus.Operator.MOperator;
 import anshay.numberplus.R;
 import anshay.numberplus.activity.WeatherActivity;
 import anshay.numberplus.gson.Forecast;
@@ -49,8 +50,8 @@ import okhttp3.Response;
  * Created by Anshay on 2017/8/11.
  * 首页界面
  */
-public class FragmentHome extends Fragment implements AdapterView.OnItemClickListener {
-    private String TAG = "mine";//log标签
+public class FragmentHome extends Fragment implements AdapterView.OnItemClickListener{
+    private String TAG = "mine:  ";//log标签
     private TextView cityName, date, temperatureNow, weatherTypeNow;
     private GridView gridView;
     private MyGridViewAdapter adapter;//gridView适配器
@@ -58,15 +59,16 @@ public class FragmentHome extends Fragment implements AdapterView.OnItemClickLis
     private ArrayList<WeatherBean> list = new ArrayList<WeatherBean>();//天气类实体的集合
     private LocationManager locationManager;
     private Banner banner;//轮播图控件
+    public SwipeRefreshLayout swipeRefresh;//下拉刷新控件
 
     Integer[] images = { R.mipmap.befor1, R.mipmap.befor2, R.mipmap.befor3, R.mipmap.befor4, R.mipmap.befor5};//轮播图资源文件
     private String myUrl = "https://free-api.heweather.com/v5/";//接口网址
-    public String myKey = "&key=7d600ab4df3d4cad89141901a36dd7e4";//我的私钥
-    public String guoKey = "&key=bc0418b57b2d4918819d3974ac1285d9";//郭大神的私钥
+    public String myKey = "7d600ab4df3d4cad89141901a36dd7e4";//我的私钥
+    public String guoKey = "bc0418b57b2d4918819d3974ac1285d9";//郭大神的私钥
+    private int UPDATE_INFO = 1;
     private double latitude, longitude;//经纬度
     private String provider;
     private MOperator mOperator;
-
 
     private Handler handler = new Handler() {
         public void handleMessage(Message msg) {
@@ -98,7 +100,7 @@ public class FragmentHome extends Fragment implements AdapterView.OnItemClickLis
         if (list.size() == 0) {
             Log.d("mine", "查询list时无数据");
             initLocation();//先获取经纬度
-            getForecastWeatherInfo(latitude, longitude);//从服务器上去查询数据并存到数据库中,此时list集合中已有数据！
+            getForecastWeatherInfo(latitude, longitude);//从服务器上去查询数据并存到数据库中,此段代码后时list集合中已有数据！
         } else {
             for (int i = 0; i < list.size(); i++) {
                 WeatherBean bean = list.get(i);
@@ -113,12 +115,15 @@ public class FragmentHome extends Fragment implements AdapterView.OnItemClickLis
         setMyInfo();//中间栏信息
 
         gridView.setOnItemClickListener(this); //子项的点击事件监听
+//        swipeRefresh.setOnRefreshListener(this);//下拉刷新监听
         return view;
     }
 
     /*初始化控件*/
     private void initView(View view) {
         banner = (Banner) view.findViewById(R.id.banner);
+//        swipeRefresh = (SwipeRefreshLayout) view.findViewById(R.id.refresh);
+//        swipeRefresh.setColorSchemeResources(R.color.colorAccent);//设置刷新进度条颜色
         cityName = (TextView) view.findViewById(R.id.city);
         date = (TextView) view.findViewById(R.id.date);
         temperatureNow = (TextView) view.findViewById(R.id.temperatureNow);
@@ -236,7 +241,7 @@ public class FragmentHome extends Fragment implements AdapterView.OnItemClickLis
     /* 根据经纬度请求未来天气信息,并发送给handler*/
     public void getForecastWeatherInfo(Double latitude, Double longitude) {
         String weatherUrl = myUrl + "weather?city=" + latitude + ","
-                + longitude + guoKey;
+                + longitude + "&key="+guoKey;
         HttpUtil.sendOKHttpRequest(weatherUrl, new Callback() {
             @Override
             public void onFailure(okhttp3.Call call, IOException e) {//请求失败调用
@@ -246,14 +251,13 @@ public class FragmentHome extends Fragment implements AdapterView.OnItemClickLis
             @Override
             public void onResponse(okhttp3.Call call, Response response) throws IOException {
                 final String responseText = response.body().string();
-//                final Weather weather = Utility.handleWeatherResponse(responseText);
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
                         Message message = new Message();
                         Bundle bundle = new Bundle();
                         bundle.putString("responseText", responseText);
-                        message.what = 1;
+                        message.what = UPDATE_INFO;
                         message.setData(bundle);
                         handler.sendMessage(message);
                     }
@@ -302,6 +306,7 @@ public class FragmentHome extends Fragment implements AdapterView.OnItemClickLis
         bean.setMbitMap(bitmap);
     }
 
+
     /*gridView子项点击事件*/
     //问题，我怎么知道哪一个onItemClick是谁的。
     @Override
@@ -312,6 +317,16 @@ public class FragmentHome extends Fragment implements AdapterView.OnItemClickLis
         intent.putExtra("mybean", bean);
         startActivity(intent);//先获取到当前的Activity，再做跳转
     }
+
+////    下拉刷新
+//    @Override
+//    public void onRefresh() {
+//        Log.d(TAG, "下拉刷新");
+//        initLocation();//先获取经纬度
+//        //不能做添加，要做的是更新数据数据/
+////        getForecastWeatherInfo(latitude, longitude);//从服务器上去查询数据并存到数据库中
+//
+//    }
 }
 
 /*三方jar包要求重写ImageLoader*/
