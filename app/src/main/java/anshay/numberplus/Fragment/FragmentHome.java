@@ -48,20 +48,23 @@ import okhttp3.Response;
 
 /**
  * Created by Anshay on 2017/8/11.
+ * Email: anshaym@163.com
+
  * 首页界面
  */
-public class FragmentHome extends Fragment implements AdapterView.OnItemClickListener{
+public class FragmentHome extends Fragment implements AdapterView.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
     private String TAG = "mine:  ";//log标签
     private TextView cityName, date, temperatureNow, weatherTypeNow;
     private GridView gridView;
     private MyGridViewAdapter adapter;//gridView适配器
     private WeatherBean bean;//天气类实体
     private ArrayList<WeatherBean> list = new ArrayList<WeatherBean>();//天气类实体的集合
+
     private LocationManager locationManager;
     private Banner banner;//轮播图控件
-    public SwipeRefreshLayout swipeRefresh;//下拉刷新控件
+    public SwipeRefreshLayout swipeRefresh;//下拉刷 新控件
 
-    Integer[] images = { R.mipmap.befor1, R.mipmap.befor2, R.mipmap.befor3, R.mipmap.befor4, R.mipmap.befor5};//轮播图资源文件
+    Integer[] images = {R.mipmap.befor1, R.mipmap.befor2, R.mipmap.befor3, R.mipmap.befor4, R.mipmap.befor5};//轮播图资源文件
     private String myUrl = "https://free-api.heweather.com/v5/";//接口网址
     public String myKey = "7d600ab4df3d4cad89141901a36dd7e4";//我的私钥
     public String guoKey = "bc0418b57b2d4918819d3974ac1285d9";//郭大神的私钥
@@ -80,6 +83,12 @@ public class FragmentHome extends Fragment implements AdapterView.OnItemClickLis
                     temperatureNow.setText(weather.now.temperature + "℃");//实时气温
                     setDate();//设置中间栏日期信息
                     saveWeatherInfo(weather);//gridView信息存入数据库
+
+                    adapter = new MyGridViewAdapter(getActivity(), list); // 初始化适配器
+                    Log.d(TAG, "初始化适配器");
+
+                    gridView.setAdapter(adapter);// gridView与适配器绑定
+                    Log.d(TAG, "gridView与适配器绑定");
                     break;
                 default:
                     break;
@@ -98,32 +107,36 @@ public class FragmentHome extends Fragment implements AdapterView.OnItemClickLis
         //先从数据库查询数据,如果没有数据，就从服务器上去查
         list = mOperator.queryAll();
         if (list.size() == 0) {
-            Log.d("mine", "查询list时无数据");
+            Log.d(TAG, "查询list时无数据");
             initLocation();//先获取经纬度
             getForecastWeatherInfo(latitude, longitude);//从服务器上去查询数据并存到数据库中,此段代码后时list集合中已有数据！
+            Log.d(TAG + "网络请求获取后的list长度：", String.valueOf(list.size()));
         } else {
+            //如果是从数据库中取得的数据，为每一个实体添加背景图信息
             for (int i = 0; i < list.size(); i++) {
                 WeatherBean bean = list.get(i);
                 setBitmap(bean);
             }
-
+            Log.d(TAG, "为实体类配置图片完成，数目为" + String.valueOf(list.size()));
         }
 
+        //异步原因handler处理完数据前这几行代码就先运行了，导致页面要很长时间才能出来画面，为了实现出现页面即出现画面，我把这两行代码放在了handler里面
         adapter = new MyGridViewAdapter(getActivity(), list); // 初始化适配器
         gridView.setAdapter(adapter);// gridView与适配器绑定
 
         setMyInfo();//中间栏信息
+        Log.d(TAG, "中间栏信息");
 
         gridView.setOnItemClickListener(this); //子项的点击事件监听
-//        swipeRefresh.setOnRefreshListener(this);//下拉刷新监听
+        swipeRefresh.setOnRefreshListener(this);//下拉刷新监听
         return view;
     }
 
     /*初始化控件*/
     private void initView(View view) {
         banner = (Banner) view.findViewById(R.id.banner);
-//        swipeRefresh = (SwipeRefreshLayout) view.findViewById(R.id.refresh);
-//        swipeRefresh.setColorSchemeResources(R.color.colorAccent);//设置刷新进度条颜色
+        swipeRefresh = (SwipeRefreshLayout) view.findViewById(R.id.refresh);
+        swipeRefresh.setColorSchemeResources(R.color.colorAccent);//设置刷新进度条颜色
         cityName = (TextView) view.findViewById(R.id.city);
         date = (TextView) view.findViewById(R.id.date);
         temperatureNow = (TextView) view.findViewById(R.id.temperatureNow);
@@ -133,7 +146,7 @@ public class FragmentHome extends Fragment implements AdapterView.OnItemClickLis
         mOperator = new MOperator(getContext());//初始化数据库操作类
     }
 
-    /*中间栏天气*/
+    /*中间栏信息*/
     private void setMyInfo() {
         bean = new WeatherBean();
         if (list.size() > 0) {
@@ -168,10 +181,10 @@ public class FragmentHome extends Fragment implements AdapterView.OnItemClickLis
         List<String> providerList = locationManager.getProviders(true);//获取所有可用的位置提供器，传入True表示只有启用的位置提供器才会被返回
         if (providerList.contains(LocationManager.GPS_PROVIDER)) {
             provider = locationManager.GPS_PROVIDER;
-            Log.i(TAG+"权限log", "gps");
+            Log.i(TAG + "权限log", "gps");
         } else if (providerList.contains(locationManager.NETWORK_PROVIDER)) {
             provider = locationManager.NETWORK_PROVIDER;
-            Log.i(TAG+"权限log", "internet");
+            Log.i(TAG + "权限log", "internet");
         } else {
             Toast.makeText(getActivity(), "no location provider to use", Toast.LENGTH_SHORT).show();
         }
@@ -182,17 +195,17 @@ public class FragmentHome extends Fragment implements AdapterView.OnItemClickLis
                 Toast.makeText(getActivity(), "你拒绝了权限请求", Toast.LENGTH_SHORT).show();
             } else {
                 ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-                Log.i(TAG+"权限log", "正在请求权限");
+                Log.i(TAG + "权限log", "正在请求权限");
             }
         } else {//如果有权限，就直接进行事件处理
-            Log.i(TAG+"权限log", "有权限");
+            Log.i(TAG + "权限log", "有权限");
             Location location = locationManager.getLastKnownLocation(provider);
             if (location != null) {
-                Log.i(TAG+"权限log", "显示位置");
+                Log.i(TAG + "权限log", "显示位置");
                 latitude = location.getLatitude();
                 longitude = location.getLongitude();
-                Log.i(TAG+"纬度", String.valueOf(latitude));
-                Log.i(TAG+"经度", String.valueOf(longitude));
+                Log.i(TAG + "纬度", String.valueOf(latitude));
+                Log.i(TAG + "经度", String.valueOf(longitude));
 
 
             }
@@ -241,11 +254,13 @@ public class FragmentHome extends Fragment implements AdapterView.OnItemClickLis
     /* 根据经纬度请求未来天气信息,并发送给handler*/
     public void getForecastWeatherInfo(Double latitude, Double longitude) {
         String weatherUrl = myUrl + "weather?city=" + latitude + ","
-                + longitude + "&key="+guoKey;
+                + longitude + "&key=" + guoKey;
         HttpUtil.sendOKHttpRequest(weatherUrl, new Callback() {
             @Override
             public void onFailure(okhttp3.Call call, IOException e) {//请求失败调用
-                Toast.makeText(getActivity(), "获取天气信息失败", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getActivity(), "获取天气信息失败", Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "获取天气信息失败");
+                swipeRefresh.setRefreshing(false);//关闭刷新进度条
             }
 
             @Override
@@ -260,6 +275,7 @@ public class FragmentHome extends Fragment implements AdapterView.OnItemClickLis
                         message.what = UPDATE_INFO;
                         message.setData(bundle);
                         handler.sendMessage(message);
+                        swipeRefresh.setRefreshing(false);//关闭刷新进度条
                     }
                 }).start();
             }
@@ -268,6 +284,7 @@ public class FragmentHome extends Fragment implements AdapterView.OnItemClickLis
 
     /*将天气信息存在数据库中*/
     private void saveWeatherInfo(Weather weather) {
+//                    mlist.clear();//先清空
         for (Forecast forecast : weather.forecastList) {
             WeatherBean mbean = new WeatherBean();
 
@@ -287,12 +304,11 @@ public class FragmentHome extends Fragment implements AdapterView.OnItemClickLis
             mbean.setSc(forecast.wind.sc);//风向
             mbean.setSunRise(forecast.sun.sr);//日出
             mbean.setSunSet(forecast.sun.ss);//日落
-
             setBitmap(mbean);
-
             list.add(mbean);
             mOperator.insert(mbean);//添加到数据库中去
         }
+        Log.d(TAG + "网络请求后的list：", String.valueOf(list.size()));
     }
 
     /*为Weatherbean设置bitmap属性*/
@@ -316,6 +332,24 @@ public class FragmentHome extends Fragment implements AdapterView.OnItemClickLis
         Intent intent = new Intent(getActivity(), WeatherActivity.class);
         intent.putExtra("mybean", bean);
         startActivity(intent);//先获取到当前的Activity，再做跳转
+    }
+
+    @Override
+    public void onRefresh() {
+//        for (int i = 1; i <list.size(); i++) {
+//            mOperator.delete(i);//删除数据库中的数据
+//        }
+//        initLocation();//先获取经纬度
+//        getForecastWeatherInfo(latitude, longitude);//从服务器上去查询数据并存到数据库中,此段代码后时list集合中已有数据！
+        list = mOperator.queryAll();
+        swipeRefresh.setRefreshing(false);
+
+        adapter = new MyGridViewAdapter(getActivity(), list); // 初始化适配器
+        for (int i = 0; i < list.size(); i++) {
+            WeatherBean bean = list.get(i);
+            setBitmap(bean);
+        }
+        gridView.setAdapter(adapter);// gridView与适配器绑定
     }
 
 ////    下拉刷新

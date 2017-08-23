@@ -14,6 +14,7 @@ import anshay.numberplus.OpenHelper.DatabaseOpenHelper;
 
 /**
  * Created by Anshay on 2017/8/21.
+ * Email: anshaym@163.com
  * 数据库管理器
  */
 
@@ -41,9 +42,9 @@ public class MOperator {
             values.put("sunset", bean.getSunSet());
             values.put("dir", bean.getDir());
             values.put("sc", bean.getSc());
-            values.put("nowtemperature",bean.getNowTemperature());
-            values.put("typenow",bean.getWeatherTypeNow());
-            values.put("icon",bean.getIcon());
+            values.put("nowtemperature", bean.getNowTemperature());
+            values.put("typenow", bean.getWeatherTypeNow());
+            values.put("icon", bean.getIcon());
             db = dbHelp.getWritableDatabase();
             db.insert(DatabaseOpenHelper.TableWeather, null, values);
             values.clear();
@@ -76,46 +77,56 @@ public class MOperator {
 //        db.close();
 //    }
 
-////     删除数据库日记表中指定日记编号日记记录
-//    public void delete(int id) {
-//        db = dbHelp.getWritableDatabase();
-//        db.delete(DatabaseOpenHelper.TableWeather, "id=?", new String[] { id + "" });
-//        db.close();
-//    }
+    //     删除数据库日记表中指定日记编号日记记录
+    public void delete(int id) {
+        db = dbHelp.getWritableDatabase();
+        try {
+            try {
+                db.delete(DatabaseOpenHelper.TableWeather, "id=?", new String[]{id + ""});
+            } finally {
+                db.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     // 获取日记表中所有日记记录
     public ArrayList<WeatherBean> queryAll() {
-        Log.i(TAG + "quary", "Start");
+        Log.i(TAG + "query", "Start");
         ArrayList<WeatherBean> list = new ArrayList<WeatherBean>();
         WeatherBean bean = null;
         db = dbHelp.getReadableDatabase();
         Cursor cursor;
         cursor = db.query(DatabaseOpenHelper.TableWeather, null, null, null, null, null, null);
-        Log.d( TAG+"queryAll:", String.valueOf(cursor.moveToNext()));
         try {
-            while (cursor.moveToNext()) {
-                bean = new WeatherBean();
-                bean.setDate(cursor.getString(cursor.getColumnIndex("date")));
-                bean.setCity(cursor.getString(cursor.getColumnIndex("city")));
-                bean.setMinTemperature(cursor.getString(cursor.getColumnIndex("min")));
-                bean.setMaxTemperature(cursor.getString(cursor.getColumnIndex("max")));
-                bean.setWeatherType1(cursor.getString(cursor.getColumnIndex("type1")));
-                bean.setWeatherType2(cursor.getString(cursor.getColumnIndex("type2")));
-                bean.setSunRise(cursor.getString(cursor.getColumnIndex("sunrise")));
-                bean.setSunSet(cursor.getString(cursor.getColumnIndex("sunset")));
-                bean.setDir(cursor.getString(cursor.getColumnIndex("dir")));
-                bean.setSc(cursor.getString(cursor.getColumnIndex("sc")));
+            try {
+                while (cursor.moveToNext()) {
+                    bean = new WeatherBean();
+                    bean.setDate(cursor.getString(cursor.getColumnIndex("date")));
+                    bean.setCity(cursor.getString(cursor.getColumnIndex("city")));
+                    bean.setMinTemperature(cursor.getString(cursor.getColumnIndex("min")));
+                    bean.setMaxTemperature(cursor.getString(cursor.getColumnIndex("max")));
+                    bean.setWeatherType1(cursor.getString(cursor.getColumnIndex("type1")));
+                    bean.setWeatherType2(cursor.getString(cursor.getColumnIndex("type2")));
+                    bean.setSunRise(cursor.getString(cursor.getColumnIndex("sunrise")));
+                    bean.setSunSet(cursor.getString(cursor.getColumnIndex("sunset")));
+                    bean.setDir(cursor.getString(cursor.getColumnIndex("dir")));
+                    bean.setSc(cursor.getString(cursor.getColumnIndex("sc")));
 
-                bean.setNowTemperature(cursor.getString(cursor.getColumnIndex("nowtemperature")));
-                bean.setWeatherTypeNow(cursor.getString(cursor.getColumnIndex("typenow")));
-                bean.setIcon(cursor.getString(cursor.getColumnIndex("icon")));
-                list.add(bean);
+                    bean.setNowTemperature(cursor.getString(cursor.getColumnIndex("nowtemperature")));
+                    bean.setWeatherTypeNow(cursor.getString(cursor.getColumnIndex("typenow")));
+                    bean.setIcon(cursor.getString(cursor.getColumnIndex("icon")));
+                    Log.d(TAG, "这是第几个：" + cursor.getString(cursor.getColumnIndex("id")));
+
+                    list.add(bean);
+                }
+            } finally {
+                cursor.close();
+                db.close();
             }
         } catch (Exception e) {
             e.printStackTrace();
-        }finally {
-            cursor.close();
-            db.close();
         }
         Log.i(TAG + "queryAll", "完成数据库查询");
         return list;

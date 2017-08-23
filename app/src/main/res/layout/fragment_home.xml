@@ -76,7 +76,7 @@
             android:background="#DCDCDC" />
     </LinearLayout>
     <!--GridView-->
-    <LinearLayout
+    <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/refresh"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -95,7 +95,7 @@
             android:stretchMode="columnWidth"
             android:verticalSpacing="1dp" />
 
-    </LinearLayout>
+    </android.support.v4.widget.SwipeRefreshLayout>
 
     <!--底部的一条线-->
     <ImageView

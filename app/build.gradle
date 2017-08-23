@@ -33,4 +33,6 @@ dependencies {
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     testCompile 'junit:junit:4.12'
     compile 'com.youth.banner:banner:1.4.9'//图片轮播器的三方jar包
+    debugCompile 'com.amitshekhar.android:debug-db:1.0.0'//实时查看数据库的三方jar包(不可用)
+
 }

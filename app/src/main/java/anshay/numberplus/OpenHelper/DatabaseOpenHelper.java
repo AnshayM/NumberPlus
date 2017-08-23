@@ -12,7 +12,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DatabaseOpenHelper extends SQLiteOpenHelper {
     static int Ver = 1;// 数据库的版本号
     public static String TableWeather = "WeatherInfo";// 天气表
-    public static String DBName = "Np.db";// 数据库名字
+    public static String DBName = "WeatherDB";// 数据库名字
     // 多态构造函数
     public DatabaseOpenHelper(Context context, String name, SQLiteDatabase.CursorFactory factory,
                               int version) {
