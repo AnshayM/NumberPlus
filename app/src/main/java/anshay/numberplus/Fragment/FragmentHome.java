@@ -54,7 +54,7 @@ import okhttp3.Response;
  */
 public class FragmentHome extends Fragment implements AdapterView.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
     private String TAG = "mine:  ";//log标签
-    private TextView cityName, date, temperatureNow, weatherTypeNow;
+    private TextView cityName, date, temperatureNow, weatherTypeNow, updateTime;
     private GridView gridView;
     private MyGridViewAdapter adapter;//gridView适配器
     private WeatherBean bean;//天气类实体
@@ -81,8 +81,8 @@ public class FragmentHome extends Fragment implements AdapterView.OnItemClickLis
                     cityName.setText(weather.basic.cityName);//城市
                     weatherTypeNow.setText(weather.now.more.info);//实时天气种类;
                     temperatureNow.setText(weather.now.temperature + "℃");//实时气温
-                    setDate();//设置中间栏日期信息
                     saveWeatherInfo(weather);//gridView信息存入数据库
+                    setMyInfo();//设置中间栏日期信息(因为数据库信息有变，所以重新设置此信息)
 
                     adapter = new MyGridViewAdapter(getActivity(), list); // 初始化适配器
                     Log.d(TAG, "初始化适配器");
@@ -103,19 +103,20 @@ public class FragmentHome extends Fragment implements AdapterView.OnItemClickLis
 
         initBanner();//初始化顶部轮播图
 
-        //先从数据库查询数据,如果没有数据，就从服务器上去查
+        //先从数据库查询数据,如果没有数据，就从服务器上去查，如果有数据，设置isFirst为false
         list = mOperator.queryAll();
         if (list.size() == 0) {
             Log.d(TAG, "查询list时无数据");
             initLocation();//先获取经纬度
             getForecastWeatherInfo(latitude, longitude);//从服务器上去查询数据并存到数据库中,此段代码后时list集合中已有数据！
-            Log.d(TAG + "网络请求获取后的list长度：", "因为异步处理，此时还没有数据"+String.valueOf(list.size()));
+            Log.d(TAG + "网络请求获取后的list长度：", "因为异步处理，此时还没有数据" + String.valueOf(list.size()));
         } else {
             //如果是从数据库中取得的数据，为每一个实体添加背景图信息
             for (int i = 0; i < list.size(); i++) {
                 WeatherBean bean = list.get(i);
                 setBitmap(bean);
             }
+            isFirst = false;
             Log.d(TAG, "为实体类配置图片完成，数目为" + String.valueOf(list.size()));
         }
 
@@ -139,6 +140,7 @@ public class FragmentHome extends Fragment implements AdapterView.OnItemClickLis
         date = (TextView) view.findViewById(R.id.date);
         temperatureNow = (TextView) view.findViewById(R.id.temperatureNow);
         weatherTypeNow = (TextView) view.findViewById(R.id.weatherTypeNow);
+        updateTime = (TextView) view.findViewById(R.id.update_time);
         gridView = (GridView) view.findViewById(R.id.gridView);
 
         mOperator = new MOperator(getContext());//初始化数据库操作类
@@ -153,6 +155,7 @@ public class FragmentHome extends Fragment implements AdapterView.OnItemClickLis
             cityName.setText(bean.getCity());
             temperatureNow.setText(bean.getNowTemperature());
             weatherTypeNow.setText(bean.getWeatherTypeNow());
+            updateTime.setText(bean.getUpdateTime());
         } else {
             Log.d("mine", "list加载无数据");
         }
@@ -299,6 +302,7 @@ public class FragmentHome extends Fragment implements AdapterView.OnItemClickLis
             mbean.setSc(forecast.wind.sc);//风向
             mbean.setSunRise(forecast.sun.sr);//日出
             mbean.setSunSet(forecast.sun.ss);//日落
+            setUpdate(mbean);//为实体类配置更新时间信息
             setBitmap(mbean);//为实体类配置bitmap信息
             mbean.setMyId(i);
             i++;
@@ -315,6 +319,15 @@ public class FragmentHome extends Fragment implements AdapterView.OnItemClickLis
         }
         isFirst = false;
         Log.d(TAG + "网络请求后的list：", String.valueOf(list.size()));
+    }
+
+    /*为Weatherbean设置更新时间*/
+    private void setUpdate(WeatherBean bean) {
+        Calendar calendar = Calendar.getInstance();
+        String hour = String.valueOf(calendar.get(Calendar.HOUR_OF_DAY));
+        String minute = String.valueOf(calendar.get(Calendar.MINUTE));
+        String second = String.valueOf(calendar.get(Calendar.SECOND));
+        bean.setUpdateTime(hour + ":" + minute + ":" + second);
     }
 
     /*为Weatherbean设置bitmap属性*/

@@ -33,6 +33,7 @@ public class MOperator {
         ContentValues values = new ContentValues();
         try {
             values.put("myID", bean.getMyId());
+            values.put("updateTime", bean.getUpdateTime());
             values.put("city", bean.getCity());
             values.put("date", bean.getDate());
             values.put("max", bean.getMaxTemperature());
@@ -61,6 +62,7 @@ public class MOperator {
         ContentValues values = new ContentValues();
         try {
             try {
+                values.put("updateTime", bean.getUpdateTime());
                 values.put("city", bean.getCity());
                 values.put("date", bean.getDate());
                 values.put("max", bean.getMaxTemperature());
@@ -114,6 +116,7 @@ public class MOperator {
                 while (cursor.moveToNext()) {
                     bean = new WeatherBean();
                     bean.setMyId(cursor.getInt(cursor.getColumnIndex("myId")));
+                    bean.setUpdateTime(cursor.getString(cursor.getColumnIndex("updateTime")));
                     bean.setDate(cursor.getString(cursor.getColumnIndex("date")));
                     bean.setCity(cursor.getString(cursor.getColumnIndex("city")));
                     bean.setMinTemperature(cursor.getString(cursor.getColumnIndex("min")));

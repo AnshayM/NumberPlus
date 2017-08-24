@@ -30,9 +30,10 @@ public class WeatherBean implements Parcelable {//继承接口使其可序列化
     private Bitmap myBitMap;
     private String nowTemperature;
     private String weatherTypeNow;
+    private String updateTime;//更新时间
 
     public WeatherBean() {
-    }//重写了Paraclabel接口，无参构造函数需自己写
+    }//重写了Parcelable接口，无参构造函数需自己写
 
     public int getMyId() {
         return myId;
@@ -40,6 +41,14 @@ public class WeatherBean implements Parcelable {//继承接口使其可序列化
 
     public void setMyId(int myId) {
         this.myId = myId;
+    }
+
+    public String getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(String updateTime) {
+        this.updateTime = updateTime;
     }
 
     public String getCity() {
@@ -176,6 +185,7 @@ public class WeatherBean implements Parcelable {//继承接口使其可序列化
         dest.writeParcelable(this.myBitMap, flags);
         dest.writeString(this.nowTemperature);
         dest.writeString(this.weatherTypeNow);
+        dest.writeString(this.updateTime);
     }
 
     protected WeatherBean(Parcel in) {
@@ -194,6 +204,7 @@ public class WeatherBean implements Parcelable {//继承接口使其可序列化
         this.myBitMap = in.readParcelable(Bitmap.class.getClassLoader());
         this.nowTemperature = in.readString();
         this.weatherTypeNow = in.readString();
+        this.updateTime = in.readString();
     }
 
     public static final Creator<WeatherBean> CREATOR = new Creator<WeatherBean>() {

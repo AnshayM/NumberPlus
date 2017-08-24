@@ -35,7 +35,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
         String sql = "Create Table "
                 + TableWeather
                 + "(id integer primary key autoincrement," +
-                "myId integer, " +
+                "myId integer, updateTime varchar(100)," +
                 "city varchar(100), date varchar(100)," +
                 "max varchar(100), min varchar(100)," +
                 "typeDay varchar(100),typeNight varchar(100)," +
