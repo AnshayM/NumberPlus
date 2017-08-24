@@ -15,47 +15,31 @@ import anshay.numberplus.gson.Forecast;
  */
 
 public class WeatherBean implements Parcelable {//继承接口使其可序列化
-    private int id;
+    private int myId;
     private String city;
     private String icon;
     private String date;
     private String maxTemperature;
     private String minTemperature;
-    private String weatherType1;
-    private String weatherType2;
+    private String weatherTypeDay;
+    private String weatherTypeNight;
     private String sunRise;
     private String sunSet;
     private String dir;//风向
     private String sc;//风速
-    private Bitmap mbitMap;
+    private Bitmap myBitMap;
     private String nowTemperature;
     private String weatherTypeNow;
 
     public WeatherBean() {
     }//重写了Paraclabel接口，无参构造函数需自己写
 
-    public int getId() {
-        return id;
+    public int getMyId() {
+        return myId;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getNowTemperature() {
-        return nowTemperature;
-    }
-
-    public void setNowTemperature(String nowTemperature) {
-        this.nowTemperature = nowTemperature;
-    }
-
-    public String getWeatherTypeNow() {
-        return weatherTypeNow;
-    }
-
-    public void setWeatherTypeNow(String weatherTypeNow) {
-        this.weatherTypeNow = weatherTypeNow;
+    public void setMyId(int myId) {
+        this.myId = myId;
     }
 
     public String getCity() {
@@ -66,20 +50,52 @@ public class WeatherBean implements Parcelable {//继承接口使其可序列化
         this.city = city;
     }
 
-    public Bitmap getMbitMap() {
-        return mbitMap;
+    public String getIcon() {
+        return icon;
     }
 
-    public void setMbitMap(Bitmap mbitMap) {
-        this.mbitMap = mbitMap;
+    public void setIcon(String icon) {
+        this.icon = icon;
     }
 
-    public String getWeatherType1() {
-        return weatherType1;
+    public String getDate() {
+        return date;
     }
 
-    public void setWeatherType1(String weatherType1) {
-        this.weatherType1 = weatherType1;
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public String getMaxTemperature() {
+        return maxTemperature;
+    }
+
+    public void setMaxTemperature(String maxTemperature) {
+        this.maxTemperature = maxTemperature;
+    }
+
+    public String getMinTemperature() {
+        return minTemperature;
+    }
+
+    public void setMinTemperature(String minTemperature) {
+        this.minTemperature = minTemperature;
+    }
+
+    public String getWeatherTypeDay() {
+        return weatherTypeDay;
+    }
+
+    public void setWeatherTypeDay(String weatherTypeDay) {
+        this.weatherTypeDay = weatherTypeDay;
+    }
+
+    public String getWeatherTypeNight() {
+        return weatherTypeNight;
+    }
+
+    public void setWeatherTypeNight(String weatherTypeNight) {
+        this.weatherTypeNight = weatherTypeNight;
     }
 
     public String getSunRise() {
@@ -114,99 +130,81 @@ public class WeatherBean implements Parcelable {//继承接口使其可序列化
         this.sc = sc;
     }
 
-    public String getDate() {
-        return date;
+    public Bitmap getMyBitMap() {
+        return myBitMap;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public void setMyBitMap(Bitmap myBitMap) {
+        this.myBitMap = myBitMap;
     }
 
-    public String getIcon() {
-        return icon;
+    public String getNowTemperature() {
+        return nowTemperature;
     }
 
-    public void setIcon(String icon) {
-        this.icon = icon;
+    public void setNowTemperature(String nowTemperature) {
+        this.nowTemperature = nowTemperature;
     }
 
-    public String getMaxTemperature() {
-        return maxTemperature;
+    public String getWeatherTypeNow() {
+        return weatherTypeNow;
     }
 
-    public void setMaxTemperature(String maxTemperature) {
-        this.maxTemperature = maxTemperature;
+    public void setWeatherTypeNow(String weatherTypeNow) {
+        this.weatherTypeNow = weatherTypeNow;
     }
 
-    public String getMinTemperature() {
-        return minTemperature;
-    }
-
-    public void setMinTemperature(String minTemperature) {
-        this.minTemperature = minTemperature;
-    }
-
-    public String getWeatherType2() {
-        return weatherType2;
-    }
-
-    public void setWeatherType2(String weatherType2) {
-        this.weatherType2 = weatherType2;
-    }
-
-
-    //以下为实现Parcelable接口固定写法
     @Override
     public int describeContents() {
         return 0;
     }
 
     @Override
-    public void writeToParcel(Parcel out, int flags) {
-        out.writeString(weatherTypeNow);
-        out.writeString(nowTemperature);
-        out.writeString(city);
-        out.writeString(icon);
-        out.writeString(date);
-        out.writeString(maxTemperature);
-        out.writeString(minTemperature);
-        out.writeString(weatherType1);
-        out.writeString(weatherType2);
-        out.writeString(sunRise);
-        out.writeString(sunSet);
-        out.writeString(dir);
-        out.writeString(sc);
-        out.writeParcelable(mbitMap, flags);
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.myId);
+        dest.writeString(this.city);
+        dest.writeString(this.icon);
+        dest.writeString(this.date);
+        dest.writeString(this.maxTemperature);
+        dest.writeString(this.minTemperature);
+        dest.writeString(this.weatherTypeDay);
+        dest.writeString(this.weatherTypeNight);
+        dest.writeString(this.sunRise);
+        dest.writeString(this.sunSet);
+        dest.writeString(this.dir);
+        dest.writeString(this.sc);
+        dest.writeParcelable(this.myBitMap, flags);
+        dest.writeString(this.nowTemperature);
+        dest.writeString(this.weatherTypeNow);
     }
 
-    public static final Parcelable.Creator<WeatherBean> CREATOR = new Creator<WeatherBean>() {
+    protected WeatherBean(Parcel in) {
+        this.myId = in.readInt();
+        this.city = in.readString();
+        this.icon = in.readString();
+        this.date = in.readString();
+        this.maxTemperature = in.readString();
+        this.minTemperature = in.readString();
+        this.weatherTypeDay = in.readString();
+        this.weatherTypeNight = in.readString();
+        this.sunRise = in.readString();
+        this.sunSet = in.readString();
+        this.dir = in.readString();
+        this.sc = in.readString();
+        this.myBitMap = in.readParcelable(Bitmap.class.getClassLoader());
+        this.nowTemperature = in.readString();
+        this.weatherTypeNow = in.readString();
+    }
+
+    public static final Creator<WeatherBean> CREATOR = new Creator<WeatherBean>() {
+        @Override
+        public WeatherBean createFromParcel(Parcel source) {
+            return new WeatherBean(source);
+        }
+
         @Override
         public WeatherBean[] newArray(int size) {
             return new WeatherBean[size];
         }
-
-        @Override
-        public WeatherBean createFromParcel(Parcel in) {
-            return new WeatherBean(in);
-        }
     };
-
-    public WeatherBean(Parcel in) {
-        nowTemperature = in.readString();
-        weatherTypeNow = in.readString();
-        city = in.readString();
-        icon = in.readString();
-        date = in.readString();
-        maxTemperature = in.readString();
-        minTemperature = in.readString();
-        weatherType1 = in.readString();
-        weatherType2 = in.readString();
-        sunRise = in.readString();
-        sunSet = in.readString();
-        dir = in.readString();
-        sc = in.readString();
-        mbitMap = in.readParcelable(null);// 这个地方可以为null 
-    }
-
-
 }

@@ -46,13 +46,12 @@ public class WeatherActivity extends AppCompatActivity {
         date.setText(bean.getDate());
         min.setText(bean.getMinTemperature());
         max.setText(bean.getMaxTemperature());
-        type1.setText(bean.getWeatherType1());//白天
-        type2.setText(bean.getWeatherType2());//夜间
+        type1.setText(bean.getWeatherTypeDay());//白天
+        type2.setText(bean.getWeatherTypeNight());//夜间
         sunrise.setText(bean.getSunRise());
         sunset.setText(bean.getSunSet());
         dir.setText(bean.getDir());//风向
         sc.setText(bean.getSc());//风力
-
     }
 
 }

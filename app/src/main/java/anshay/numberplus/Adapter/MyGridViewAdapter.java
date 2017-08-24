@@ -71,11 +71,11 @@ public class MyGridViewAdapter extends BaseAdapter {
             viewHolder = (ViewHolder) convertView.getTag();
         }
         viewHolder.date.setText(entity.getDate());
-        viewHolder.type.setText(entity.getWeatherType1());
+        viewHolder.type.setText(entity.getWeatherTypeDay());
         viewHolder.min.setText(entity.getMinTemperature());
         viewHolder.max.setText(entity.getMaxTemperature() + "℃");
 
-        viewHolder.icon.setImageBitmap(entity.getMbitMap());
+        viewHolder.icon.setImageBitmap(entity.getMyBitMap());
 
         convertView.setBackgroundColor(Color.WHITE);
         return convertView;

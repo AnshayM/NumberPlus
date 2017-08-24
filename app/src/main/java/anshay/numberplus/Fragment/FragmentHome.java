@@ -49,7 +49,7 @@ import okhttp3.Response;
 /**
  * Created by Anshay on 2017/8/11.
  * Email: anshaym@163.com
-
+ * <p>
  * 首页界面
  */
 public class FragmentHome extends Fragment implements AdapterView.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
@@ -59,16 +59,16 @@ public class FragmentHome extends Fragment implements AdapterView.OnItemClickLis
     private MyGridViewAdapter adapter;//gridView适配器
     private WeatherBean bean;//天气类实体
     private ArrayList<WeatherBean> list = new ArrayList<WeatherBean>();//天气类实体的集合
-
     private LocationManager locationManager;
     private Banner banner;//轮播图控件
     public SwipeRefreshLayout swipeRefresh;//下拉刷 新控件
 
-    Integer[] images = {R.mipmap.befor1, R.mipmap.befor2, R.mipmap.befor3, R.mipmap.befor4, R.mipmap.befor5};//轮播图资源文件
+    private Integer[] images = {R.mipmap.befor1, R.mipmap.befor2, R.mipmap.befor3, R.mipmap.befor4, R.mipmap.befor5};//轮播图资源文件
     private String myUrl = "https://free-api.heweather.com/v5/";//接口网址
     public String myKey = "7d600ab4df3d4cad89141901a36dd7e4";//我的私钥
     public String guoKey = "bc0418b57b2d4918819d3974ac1285d9";//郭大神的私钥
     private int UPDATE_INFO = 1;
+    private boolean isFirst = true;//是否为第一次进入app
     private double latitude, longitude;//经纬度
     private String provider;
     private MOperator mOperator;
@@ -86,7 +86,6 @@ public class FragmentHome extends Fragment implements AdapterView.OnItemClickLis
 
                     adapter = new MyGridViewAdapter(getActivity(), list); // 初始化适配器
                     Log.d(TAG, "初始化适配器");
-
                     gridView.setAdapter(adapter);// gridView与适配器绑定
                     Log.d(TAG, "gridView与适配器绑定");
                     break;
@@ -110,7 +109,7 @@ public class FragmentHome extends Fragment implements AdapterView.OnItemClickLis
             Log.d(TAG, "查询list时无数据");
             initLocation();//先获取经纬度
             getForecastWeatherInfo(latitude, longitude);//从服务器上去查询数据并存到数据库中,此段代码后时list集合中已有数据！
-            Log.d(TAG + "网络请求获取后的list长度：", String.valueOf(list.size()));
+            Log.d(TAG + "网络请求获取后的list长度：", "因为异步处理，此时还没有数据"+String.valueOf(list.size()));
         } else {
             //如果是从数据库中取得的数据，为每一个实体添加背景图信息
             for (int i = 0; i < list.size(); i++) {
@@ -125,7 +124,6 @@ public class FragmentHome extends Fragment implements AdapterView.OnItemClickLis
         gridView.setAdapter(adapter);// gridView与适配器绑定
 
         setMyInfo();//中间栏信息
-        Log.d(TAG, "中间栏信息");
 
         gridView.setOnItemClickListener(this); //子项的点击事件监听
         swipeRefresh.setOnRefreshListener(this);//下拉刷新监听
@@ -244,10 +242,6 @@ public class FragmentHome extends Fragment implements AdapterView.OnItemClickLis
             default:
                 break;
         }
-//        String ss= "今天是" + year + "年" + month + "月" + day + "日 " + "星期" + week;
-//        Message message = new Message();
-//        message.what=UPDATE_CENTRAL_TEXT;
-//        handler.setEncoding(message);
         date.setText("今天是" + year + "年" + month + "月" + day + "日 " + "星期" + week);//显示日期信息
     }
 
@@ -284,7 +278,8 @@ public class FragmentHome extends Fragment implements AdapterView.OnItemClickLis
 
     /*将天气信息存在数据库中*/
     private void saveWeatherInfo(Weather weather) {
-//                    mlist.clear();//先清空
+        list.clear();//先清空
+        int i = 0;
         for (Forecast forecast : weather.forecastList) {
             WeatherBean mbean = new WeatherBean();
 
@@ -292,34 +287,44 @@ public class FragmentHome extends Fragment implements AdapterView.OnItemClickLis
             mbean.setWeatherTypeNow(weather.now.more.info);//实时天气种类;
             mbean.setNowTemperature(weather.now.temperature + "℃");//实时气温
             //2017-08-14取字段8月14日
-            String d1 = forecast.date.split("-")[1];//截取月
-            String d2 = forecast.date.split("-")[2];//截取日
-            mbean.setDate(d1 + "月" + d2 + "日");
+            String month = forecast.date.split("-")[1];//截取月
+            String day = forecast.date.split("-")[2];//截取日
+            mbean.setDate(month + "月" + day + "日");
             mbean.setIcon(forecast.more.iconId);//天气种类id
             mbean.setMaxTemperature(forecast.temperature.max);//最高温
             mbean.setMinTemperature(forecast.temperature.min);//最低温
-            mbean.setWeatherType1(forecast.more.info1);//白天天气种类
-            mbean.setWeatherType2(forecast.more.info2);//晚上天气种类
+            mbean.setWeatherTypeDay(forecast.more.info1);//白天天气种类
+            mbean.setWeatherTypeNight(forecast.more.info2);//晚上天气种类
             mbean.setDir(forecast.wind.dir);//风向
             mbean.setSc(forecast.wind.sc);//风向
             mbean.setSunRise(forecast.sun.sr);//日出
             mbean.setSunSet(forecast.sun.ss);//日落
-            setBitmap(mbean);
+            setBitmap(mbean);//为实体类配置bitmap信息
+            mbean.setMyId(i);
+            i++;
             list.add(mbean);
-            mOperator.insert(mbean);//添加到数据库中去
+
+            //添加和修改从此处入手,做一个判断
+            if (isFirst) {
+                mOperator.insert(mbean);//添加到数据库中去
+                Log.i(TAG, "存数据库完成");
+            } else {
+                mOperator.update(mbean);//更新此条数据
+                Log.i(TAG, "更新数据库完成");
+            }
         }
+        isFirst = false;
         Log.d(TAG + "网络请求后的list：", String.valueOf(list.size()));
     }
 
     /*为Weatherbean设置bitmap属性*/
     private void setBitmap(WeatherBean bean) {
         ApplicationInfo appInfo = getActivity().getApplicationInfo();
-        Bitmap bitmap;
         String iconName = "a" + bean.getIcon();//设置图片名
         //第一个参数是图片名，第二个是位置目录，第三个是获取项目中的包
         int resID = getResources().getIdentifier(iconName, "mipmap", appInfo.packageName);
-        bitmap = BitmapFactory.decodeResource(getResources(), resID);
-        bean.setMbitMap(bitmap);
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), resID);
+        bean.setMyBitMap(bitmap);
     }
 
 
@@ -336,31 +341,12 @@ public class FragmentHome extends Fragment implements AdapterView.OnItemClickLis
 
     @Override
     public void onRefresh() {
-//        for (int i = 1; i <list.size(); i++) {
-//            mOperator.delete(i);//删除数据库中的数据
-//        }
-//        initLocation();//先获取经纬度
-//        getForecastWeatherInfo(latitude, longitude);//从服务器上去查询数据并存到数据库中,此段代码后时list集合中已有数据！
-        list = mOperator.queryAll();
-        swipeRefresh.setRefreshing(false);
-
-        adapter = new MyGridViewAdapter(getActivity(), list); // 初始化适配器
-        for (int i = 0; i < list.size(); i++) {
-            WeatherBean bean = list.get(i);
-            setBitmap(bean);
-        }
-        gridView.setAdapter(adapter);// gridView与适配器绑定
+        initLocation();//先获取经纬度
+        getForecastWeatherInfo(latitude, longitude);//从服务器上去查询数据并存到数据库中,此段代码后时list集合中已有数据！
+        swipeRefresh.setRefreshing(false);//在getForecastWeatherInfo()方法中已写
+        Log.i(TAG, "完成刷新");
     }
 
-////    下拉刷新
-//    @Override
-//    public void onRefresh() {
-//        Log.d(TAG, "下拉刷新");
-//        initLocation();//先获取经纬度
-//        //不能做添加，要做的是更新数据数据/
-////        getForecastWeatherInfo(latitude, longitude);//从服务器上去查询数据并存到数据库中
-//
-//    }
 }
 
 /*三方jar包要求重写ImageLoader*/
