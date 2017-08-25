@@ -28,7 +28,7 @@ public class MOperator {
         this.dbHelp = new DatabaseOpenHelper(context, DatabaseOpenHelper.DBName);
     }
 
-    // 日记记录插入到数据库日记表中
+    // 天气数据插入到数据库TableWeather表中
     public void insert(WeatherBean bean) {
         ContentValues values = new ContentValues();
         try {
@@ -88,7 +88,7 @@ public class MOperator {
         Log.i(TAG, "更新单条数据" + bean.getMyId());
     }
 
-    //   根据传入的myId来删除数据库中的数据
+    //   根据传入的myId来删除TableWeather表中的数据
     public void delete(int myId) {
         db = dbHelp.getWritableDatabase();
         try {
@@ -103,7 +103,7 @@ public class MOperator {
         Log.i(TAG, "删除单条数据" + myId);
     }
 
-    // 获取日记表中所有日记记录
+    // 获取数据库中TableWeather表所有数据，返回一个list集合
     public ArrayList<WeatherBean> queryAll() {
         Log.i(TAG + "query", "Start");
         ArrayList<WeatherBean> list = new ArrayList<WeatherBean>();

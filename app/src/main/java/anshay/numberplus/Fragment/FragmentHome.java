@@ -49,7 +49,6 @@ import okhttp3.Response;
 /**
  * Created by Anshay on 2017/8/11.
  * Email: anshaym@163.com
- * <p>
  * 首页界面
  */
 public class FragmentHome extends Fragment implements AdapterView.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
@@ -88,6 +87,8 @@ public class FragmentHome extends Fragment implements AdapterView.OnItemClickLis
                     Log.d(TAG, "初始化适配器");
                     gridView.setAdapter(adapter);// gridView与适配器绑定
                     Log.d(TAG, "gridView与适配器绑定");
+//                    swipeRefresh.setRefreshing(false);//关闭刷新进度条
+
                     break;
                 default:
                     break;
@@ -257,7 +258,6 @@ public class FragmentHome extends Fragment implements AdapterView.OnItemClickLis
             public void onFailure(okhttp3.Call call, IOException e) {//请求失败调用
 //                Toast.makeText(getActivity(), "获取天气信息失败", Toast.LENGTH_SHORT).show();
                 Log.d(TAG, "获取天气信息失败");
-                swipeRefresh.setRefreshing(false);//关闭刷新进度条
             }
 
             @Override
@@ -272,7 +272,6 @@ public class FragmentHome extends Fragment implements AdapterView.OnItemClickLis
                         message.what = UPDATE_INFO;
                         message.setData(bundle);
                         handler.sendMessage(message);
-                        swipeRefresh.setRefreshing(false);//关闭刷新进度条
                     }
                 }).start();
             }
@@ -325,8 +324,17 @@ public class FragmentHome extends Fragment implements AdapterView.OnItemClickLis
     private void setUpdate(WeatherBean bean) {
         Calendar calendar = Calendar.getInstance();
         String hour = String.valueOf(calendar.get(Calendar.HOUR_OF_DAY));
+        if (hour.length()==1) {
+            hour = "0" + hour;
+        }
         String minute = String.valueOf(calendar.get(Calendar.MINUTE));
+        if (minute.length()==1) {
+            minute = "0" + minute;
+        }
         String second = String.valueOf(calendar.get(Calendar.SECOND));
+        if (second.length()==1) {
+            second = "0" + second;
+        }
         bean.setUpdateTime(hour + ":" + minute + ":" + second);
     }
 
@@ -356,7 +364,7 @@ public class FragmentHome extends Fragment implements AdapterView.OnItemClickLis
     public void onRefresh() {
         initLocation();//先获取经纬度
         getForecastWeatherInfo(latitude, longitude);//从服务器上去查询数据并存到数据库中,此段代码后时list集合中已有数据！
-        swipeRefresh.setRefreshing(false);//在getForecastWeatherInfo()方法中已写
+        swipeRefresh.setRefreshing(false);//如果此处注释，会一直刷新，停留在这里，handler中无法处理，我不知道为什么
         Log.i(TAG, "完成刷新");
     }
 

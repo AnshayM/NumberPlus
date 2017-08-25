@@ -17,7 +17,10 @@ import anshay.numberplus.Fragment.FragmentMsg;
 import anshay.numberplus.Fragment.FragmentSetting;
 import anshay.numberplus.R;
 import anshay.numberplus.Fragment.FragmentConnect;
-
+/**
+ * Created by Anshay on 2017/8/13.
+ * 首页
+ */
 public class MainActivity extends AppCompatActivity {
 
     private FragmentHome home;
