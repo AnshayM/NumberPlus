@@ -1,4 +1,4 @@
-package anshay.numberplus.activity;
+package anshay.numberplus.activity.Home;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;

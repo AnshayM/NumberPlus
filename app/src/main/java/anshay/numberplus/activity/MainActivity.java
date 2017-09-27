@@ -12,11 +12,11 @@ import android.view.MenuItem;
 import java.util.ArrayList;
 import java.util.List;
 
-import anshay.numberplus.Fragment.FragmentHome;
-import anshay.numberplus.Fragment.FragmentMsg;
-import anshay.numberplus.Fragment.FragmentSetting;
+import anshay.numberplus.activity.Home.FragmentHome;
+import anshay.numberplus.activity.Msg.FragmentMsg;
+import anshay.numberplus.activity.Setting.FragmentSetting;
 import anshay.numberplus.R;
-import anshay.numberplus.Fragment.FragmentConnect;
+import anshay.numberplus.activity.Connect.FragmentConnect;
 /**
  * Created by Anshay on 2017/8/13.
  * 首页

@@ -9,5 +9,15 @@
         android:id="@+id/fragmentConnect_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="这是联系人页面" />
+        android:text="这是联系人页面,recyclerView使用例子"
+        android:layout_marginBottom="50dp"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/mRecyclerView"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </android.support.v7.widget.RecyclerView>
+
 </LinearLayout>

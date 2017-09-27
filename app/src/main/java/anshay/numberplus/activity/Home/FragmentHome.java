@@ -1,4 +1,4 @@
-package anshay.numberplus.Fragment;
+package anshay.numberplus.activity.Home;
 
 import android.Manifest;
 import android.content.Context;
@@ -35,10 +35,8 @@ import java.util.Calendar;
 import java.util.List;
 
 import anshay.numberplus.Bean.WeatherBean;
-import anshay.numberplus.Adapter.MyGridViewAdapter;
 import anshay.numberplus.Operator.MOperator;
 import anshay.numberplus.R;
-import anshay.numberplus.activity.WeatherActivity;
 import anshay.numberplus.gson.Forecast;
 import anshay.numberplus.gson.Weather;
 import anshay.numberplus.util.HttpUtil;

@@ -1,4 +1,4 @@
-package anshay.numberplus.Fragment;
+package anshay.numberplus.activity.Setting;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -11,16 +11,14 @@ import anshay.numberplus.R;
 
 /**
  * Created by Anshay on 2017/8/11.
- *联系人界面
+ * 设置界面
  */
 
-public class FragmentConnect extends Fragment{
-    private TextView mtv;//页面介绍
+public class FragmentSetting extends Fragment{
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_connect,container,false);
-        mtv = (TextView)view.findViewById(R.id.fragmentConnect_tv);
+        View view = inflater.inflate(R.layout.fragment_setting,container,false);
         return view;
     }
 }

@@ -1,4 +1,4 @@
-package anshay.numberplus.Adapter;
+package anshay.numberplus.activity.Home;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -17,7 +17,7 @@ import anshay.numberplus.R;
 
 /**
  * Created by Anshay on 2017/8/13.
- * girdView的适配器
+ * gridView的适配器
  */
 
 public class MyGridViewAdapter extends BaseAdapter {
@@ -56,7 +56,7 @@ public class MyGridViewAdapter extends BaseAdapter {
         ViewHolder viewHolder = null;
         //View的每次创建是比较耗时的，因此对于getview方法传入的convertView应充分利用 != null的判断
         if (convertView == null) {
-            convertView = mInflater.inflate(R.layout.girdview_item, null);
+            convertView = mInflater.inflate(R.layout.gridview_item, null);
 
             viewHolder = new ViewHolder();
             viewHolder.date = (TextView) convertView.findViewById(R.id.date);
