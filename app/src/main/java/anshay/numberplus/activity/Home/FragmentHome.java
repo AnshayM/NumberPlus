@@ -123,7 +123,7 @@ public class FragmentHome extends Fragment implements AdapterView.OnItemClickLis
         adapter = new MyGridViewAdapter(getActivity(), list); // 初始化适配器
         gridView.setAdapter(adapter);// gridView与适配器绑定
 
-        setMyInfo();//中间栏信息
+        setMyInfo();//中间栏信息z
 
         gridView.setOnItemClickListener(this); //子项的点击事件监听
         swipeRefresh.setOnRefreshListener(this);//下拉刷新监听
